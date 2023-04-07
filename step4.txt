@@ -1,2 +1,0 @@
-(move the UUID value at the end of /etc/default/grab so that the GRUB_CMDLINE_LINUX_DEFAULT reads:)
-    GRUB_CMDLINE_LINUX_DEFAULT="cryptdevice=UUID=<<UUID>>:root:allow-discards root=/dev/mapper/root loglevel=3 quiet"
