@@ -13,5 +13,6 @@ sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.ta
 
 sudo echo '[chaotic-aur]' | tee -a /etc/pacman.conf
 sudo echo 'Include = /etc/pacman.d/chaotic-mirrorlist' | tee -a /etc/pacman.conf
-sed -i 's/#[multilib]/[multilib]/' /etc/pacman.conf
-sed -i 's/#Include = /etc/pacman.d/mirrorlist/Include = /etc/pacman.d/mirrorlist/' /etc/pacman.conf
+sudo cp /etc/pacman.conf /etc/pacman.conf.sav
+sed -i 's/#\[multilib\]/\[multilib\]/g' /etc/pacman.conf
+sed -i 's/#Include = \/etc\/pacman.d\/mirrorlist/Include = \/etc\/pacman.d\/mirrorlist/g' /etc/pacman.conf
