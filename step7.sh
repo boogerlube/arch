@@ -1,6 +1,8 @@
 dhclient
 
-sudo pacman -S cinnamon lightdm-gtk-greeter firefox terminator pipewire
+read -p "Press [enter] to continue"
+
+sudo pacman -S cinnamon lightdm lightdm-gtk-greeter firefox terminator pipewire wireplumber pipewire-jack pipewire-pulse pipewire-alsa
 sudo systemctl enable lightdm
 sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
@@ -17,7 +19,5 @@ echo '[chaotic-aur]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/chaotic-mirrorlist' | sudo tee -a /etc/pacman.conf
 echo '[multilib]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
-#sudo sed -i 's/#[multilib]/[multilib]/' /etc/pacman.conf
-#sudo sed -i 's/#Include = /etc/pacman.d/mirrorlist/Include = /etc/pacman.d/mirrorlist/' /etc/pacman.conf
 
 sudo pacman -Sy
