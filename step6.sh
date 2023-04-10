@@ -9,5 +9,8 @@ echo "/swap/swapfile none swap defaults 0 0" | tee -a /etc/fstab
 #passwd root
 useradd -m bob
 passwd bob
+useradd aurbuilder --system
 # create file bob in /etc/sudoers.d
 echo "bob ALL=(ALL) ALL" >> /etc/sudoers.d/bob
+echo "aurbuilder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/aurbuilder
+echo "root ALL=(aurbuilder) NOPASSWD: ALL" >> /etc/sudoers.d/aurbuilder
