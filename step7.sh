@@ -1,4 +1,4 @@
-dhclient
+sudo dhclient
 ip a
 
 if : >/dev/tcp/8.8.8.8/53; then
