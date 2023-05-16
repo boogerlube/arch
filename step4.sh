@@ -4,6 +4,18 @@ mkinitcpio -P
 
 pacman -S --noconfirm grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
 
+ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
+
+if [[ "$ucode" == *"Intel"* ]]; then
+  echo "Intel processor detected. Installing intel-ucode...."
+  pacman -S --noconfirm intel-ucode
+elif [[ "$ucode" == *"AMD"* ]]; then
+  echo "AMD processor detected. Installing amd-ucode...."
+  pacman -S --noconfirm amd-ucode
+else
+  echo "No Intel or AMD processor detected."
+fi
+
 #uncomment amd or intel as necessary for the current machine
 
 #pacman -S amd-ucode
