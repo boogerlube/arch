@@ -17,6 +17,8 @@ mount -m -o noatime,commit=120,compress=zstd,space_cache=v2,subvol=@snapshots /d
 mount -m -o noatime,commit=120,compress=zstd,space_cache=v2,subvol=@swap /dev/mapper/root /mnt/swap
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
 pacstrap -K /mnt base base-devel linux linux-firmware nano dhclient
+#For LTS kernel comment out line above and uncomment line below
+#pacstrap -K /mnt base base-devel linux-lts linux-firmware nano dhclient
 genfstab -U /mnt >> /mnt/etc/fstab
 cat /mnt/etc/fstab
 cp /root/arch/* /mnt/root/
