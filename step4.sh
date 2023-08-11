@@ -28,3 +28,7 @@ UUID=$(cat UUID.tmp)
 CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root '
 echo -e '\n'$CMD | tee -a /etc/default/grub
 rm UUID.tmp
+echo -e ""
+echo -e ""
+cat ./step5.txt
+echo -e ""
