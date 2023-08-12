@@ -29,6 +29,9 @@ echo 'Include = /etc/pacman.d/chaotic-mirrorlist' | sudo tee -a /etc/pacman.conf
 echo '[multilib]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 
+sudo pacman -S linux-lts
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
 sudo pacman -Sy
 cd yay
 makepkg -si
