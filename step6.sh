@@ -10,5 +10,5 @@ echo "/swap/swapfile none swap defaults 0 0" | tee -a /etc/fstab
 useradd -m bob
 passwd bob
 #create file bob in /etc/sudoers.d
-echo "bob ALL=(ALL) ALL" >> /etc/sudoers.d/bob
+echo "bob ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/bob
 cp /root/step7.sh /home/bob/
