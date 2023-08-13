@@ -1,3 +1,4 @@
+export disk="/dev/nvme0n1p"
 ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
@@ -29,7 +30,7 @@ else
 fi
 
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
-UUID=$(blkid -o value /dev/nvme0n1p2 | head -n1)
+UUID=$(blkid -o value ${disk}2 | head -n1)
 CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root '
 sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT/ s/loglevel=3/$CMD &/g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
