@@ -22,7 +22,7 @@ btrfs su cr /mnt/@tmp
 umount /mnt
 export sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt
-mount -m -o noatime /dev/nvme0n1p1 /mnt/boot
+mount -m -o noatime ${disk}p1 /mnt/boot
 mount -m -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
 mount -m -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
 mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots
