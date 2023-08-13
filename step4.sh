@@ -16,11 +16,6 @@ else
   echo "No Intel or AMD processor detected."
 fi
 
-#uncomment amd or intel as necessary for the current machine
-
-#pacman -S amd-ucode
-#pacman -S intel-ucode
-
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 #blkid -o value /dev/nvme0n1p2 | head -n1 | tee -a /etc/default/grub
 blkid -o value /dev/nvme0n1p2 | head -n1 > UUID.tmp
