@@ -1,4 +1,5 @@
 export disk="/dev/nvme0n1"
+export diskpart="/dev/nvme0n1p"
 timedatectl set-ntp true
 wipefs -af $disk
 sgdisk --zap-all --clear $disk
@@ -6,9 +7,9 @@ partprobe $disk
 sgdisk -n 0:0:+512MiB -t 0:ef00 -c 0:esp $disk
 sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
 partprobe $disk
-mkfs.vfat -F32 -n ESP ${disk}p1
-cryptsetup luksFormat ${disk}p2
-cryptsetup open ${disk}p2 root
+mkfs.vfat -F32 -n ESP ${diskpart}1
+cryptsetup luksFormat ${diskpart}2
+cryptsetup open ${diskpart}2 root
 mkfs.btrfs -L archlinux /dev/mapper/root
 mount /dev/mapper/root /mnt
 btrfs su cr /mnt/@
@@ -22,7 +23,7 @@ btrfs su cr /mnt/@tmp
 umount /mnt
 export sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt
-mount -m -o noatime ${disk}p1 /mnt/boot
+mount -m -o noatime ${diskpart}1 /mnt/boot
 mount -m -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
 mount -m -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
 mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots
