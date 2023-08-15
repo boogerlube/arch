@@ -16,6 +16,7 @@ mkinitcpio -P
 
 pacman -S --noconfirm grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant 
 pacman -S --noconfirm dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
+pacman -S --noconfirm bash-completion cryptsetup man-db pacman-contrib
 
 ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
 
