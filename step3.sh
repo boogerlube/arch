@@ -1,3 +1,9 @@
+if [ $(id -u) = 0 ]; 
+then
+   echo "Do NOT run as root" 
+   exit
+fi
+
 sudo dhclient
 ip a
 
