@@ -47,4 +47,4 @@ useradd -m bob
 passwd bob
 #create file bob in /etc/sudoers.d
 echo "bob ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/bob
-cp /root/step7.sh /home/bob/
+cp /root/step3.sh /home/bob/
