@@ -33,7 +33,7 @@ fi
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 UUID=$(blkid -o value ${disk}2 | head -n1)
 CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root '
-sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT/ s/loglevel=3/$CMD &/g" /etc/default/grub
+sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/ s|loglevel=3|$CMD &|g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 chattr +C /swap
 read -p 'Swap size in GB? ' MEM
