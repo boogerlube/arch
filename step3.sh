@@ -23,6 +23,7 @@ sudo systemctl enable lightdm
 sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
+sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
 cd ~
 git clone https://aur.archlinux.org/yay.git
