@@ -72,7 +72,7 @@ cat /mnt/etc/fstab
 cp /root/arch/* /mnt/root/
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/
 
-Enter the new root filesystem to continue configuration
+#Enter the new root filesystem to continue configuration
 
 echo -e ""
 echo -e ""
