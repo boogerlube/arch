@@ -42,7 +42,7 @@ umount /mnt
 
 export sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt
-mount -m -o noatime ${diskpart}1 /mnt/boot
+mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskpart}1 /mnt/boot
 mount -m -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
 mount -m -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
 mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots

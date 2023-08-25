@@ -26,9 +26,9 @@ mkinitcpio -P
 
 # Setup necessary tools
 
-pacman -S --noconfirm systemd-boot efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant iwd
-pacman -S --noconfirm dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
-pacman -S --noconfirm bash-completion cryptsetup man-db pacman-contrib
+pacman -S --noconfirm systemd-boot efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant iwd \
+                      dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs \
+                      btrfs-progs bash-completion cryptsetup man-db pacman-contrib
 
 # Add CPU microcode to system
 
