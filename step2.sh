@@ -36,18 +36,22 @@ ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
 
 if [[ "$ucode" == *"Intel"* ]]; then
   echo "Intel processor detected. Installing intel-ucode...."
+  ARCH="intel-ucode.img"
   pacman -S --noconfirm intel-ucode
 elif [[ "$ucode" == *"AMD"* ]]; then
   echo "AMD processor detected. Installing amd-ucode...."
+  ARCH="amd-ucode.img"
   pacman -S --noconfirm amd-ucode
 else
   echo "No Intel or AMD processor detected."
+  ARCH=""
 fi
 
 # Install grub and configure it for encryption
 
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
-UUID=$(blkid -o value ${disk}2 | head -n1)
+# UUID=$(blkid -o value ${disk}2 | head -n1)
+UUID=$(blkid -s UUID -o value ${disk}2)
 CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root'
 sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/ s|loglevel=3|$CMD &|g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
