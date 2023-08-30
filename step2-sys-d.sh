@@ -60,7 +60,7 @@ echo "default  arch.conf" > /boot/loader/loader.conf
 echo "timeout  4" >> /boot/loader/loader.conf
 echo "console-mode max" >> /boot/loader/loader.conf
 echo "editor   no" >> /boot/loader/loader.conf
-CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root'
+
 
 #  Setup swap
 
