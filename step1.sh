@@ -74,6 +74,9 @@ cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/
 
 #Enter the new root filesystem to continue configuration
 
+umount /mnt/boot
+mount -m -o noatime /dev/nvme0n1p1 /mnt/boot
+
 echo -e ""
 echo -e ""
 echo "please cd to the /root directory and run step2.sh"

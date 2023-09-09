@@ -50,6 +50,8 @@ fi
 # Install systemd-boot and configure it for encryption
 
 bootctl --path=/boot install
+mkdir /boot/loader
+mkdir /boot/loader/entries
 UUID=$(blkid -s UUID -o value ${disk}2)
 echo "title Arch Linux" > /boot/loader/entries/arch.conf
 echo "linux /vmlinuz-linux" >> /boot/loader/entries/arch.conf
