@@ -3,6 +3,26 @@
 ######
 export disk="/dev/nvme0n1p"
 
+# List of packages to install
+
+step2pacs=(
+  efibootmgr
+  linux-headers
+  networkmanager
+  network-manager-applet
+  wpa_supplicant
+  iwd
+  dialog
+  os-prober
+  mtools
+  dosfstools
+  reflector
+  git
+  xdg-utils
+  xdg-user-dirs
+  btrfs-progs
+  )
+
 # Setup timezone and locale
 
 ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
@@ -26,9 +46,11 @@ mkinitcpio -P
 
 # Setup necessary tools
 
-pacman -S --noconfirm grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet wpa_supplicant iwd
-pacman -S --noconfirm dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
-pacman -S --noconfirm bash-completion cryptsetup man-db pacman-contrib
+#pacman -S --noconfirm efibootmgr linux-headers networkmanager network-manager-applet wpa_supplicant iwd
+#pacman -S --noconfirm dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
+#pacman -S --noconfirm bash-completion cryptsetup man-db pacman-contrib
+
+pacman -Sy "${step2pacs[@]}" --noconfirm --needed
 
 # Add CPU microcode to system
 
