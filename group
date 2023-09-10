@@ -50,7 +50,6 @@ git:x:973:
 polkitd:x:102:
 rpc:x:32:
 rpcuser:x:34:
-bob:x:1000:
 colord:x:972:
 geoclue:x:971:
 lightdm:x:970:

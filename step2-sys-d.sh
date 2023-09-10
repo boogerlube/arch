@@ -50,7 +50,7 @@ mkinitcpio -P
 #pacman -S --noconfirm dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
 #pacman -S --noconfirm bash-completion cryptsetup man-db pacman-contrib
 
-pacman -Sy "${step2pacs[@]}" --noconfirm --needed
+pacman -S "${step2pacs[@]}" --noconfirm --needed
 
 # Add CPU microcode to system
 
