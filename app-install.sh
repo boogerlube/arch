@@ -8,6 +8,18 @@ fi
 
 sudo pacman -S --needed --noconfirm - < arch_pkgs.txt
 
+#fix vscode bug with nemo
+xdg-mime default nemo.desktop inode/directory
+
+#set lightdm-slick-greeter as default greeter
+sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
+
+#setup cups to start with system
+sudo systemctl enable --now cups
+
+#update mlocate database
+sudo updatedb
+
 #sudo pacman -S --needed --noconfirm gvfs-smb p7zip unrar tar rsync file-roller terminator git
 #sudo pacman -S --needed --noconfirm a52dec faac faad2 flac jasper lame libdca libdv libmad libmpeg2 libtheora libvorbis libxv wavpack x264 xvidcore
 #sudo pacman -S --needed --noconfirm arc-gtk-theme papirus-icon-theme gnome-keyring copyq pinta
@@ -19,13 +31,13 @@ sudo pacman -S --needed --noconfirm - < arch_pkgs.txt
 #sudo pacman -S --needed --noconfirm cups-pdf czkawka mullvad-vpn gnome-calculator gnome-clocks mlocate sshfs
 #sudo pacman -S --needed --noconfirm yt-dlp rtmpdump atomicparsley aria2 python-mutagen python-pycryptodomex python-websockets
 #sudo pacman -S --needed --noconfirm bluez bluez-utils usbutils
-#sudo systemctl enable --now cups
+
 #sudo pacman -S --needed --noconfirm google-chrome
 #sudo pacman -S --needed --noconfirm ttf-ms-fonts
 #sudo pacman -S --needed --noconfirm gnome-disk-utility
 #sudo pacman -S --needed --noconfirm lightdm-slick-greeter
 #sudo pacman -S --needed --noconfirm lightdm-settings
-#sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
+
 #yay -S pamac-aur
 #yay -S albert
 #yay -S mullvad-vpn
@@ -34,9 +46,7 @@ sudo pacman -S --needed --noconfirm - < arch_pkgs.txt
 #yay -S netdiscover
 #yay -S mp3gain
 
-#update mlocate database
 
-sudo updatedb
 
 
 
