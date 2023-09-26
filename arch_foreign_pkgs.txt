@@ -1,0 +1,5 @@
+amd-disable-c6
+joplin-desktop
+kindd
+mp3gain
+netdiscover
