@@ -16,3 +16,6 @@ chmod +x ~/.local/bin/*.sh
 sudo cp ./sounds/* /usr/share/sounds/
 dconf load /org/cinnamon/sounds/ < sounds.txt
 ln -s ~/.local/bin/playlist.sh ~/.local/share/nemo/scripts/
+
+#fix vscode bug with nemo
+xdg-mime default nemo.desktop inode/directory
