@@ -17,7 +17,7 @@ read -p "Press [enter] to continue"
 
 #sudo pacman -S xorg-server xorg-server-utils xorg-xinit mesa
 sudo pacman -S --needed --noconfirm cinnamon lightdm lightdm-gtk-greeter firefox terminator pipewire wireplumber pipewire-jack pipewire-pulse pipewire-alsa
-sudo pacman -S --needed --noconfirm pipewire-x11-bell pipewire-zeroconf neofetch nfs-utils pkgfile
+sudo pacman -S --needed --noconfirm pipewire-x11-bell pipewire-zeroconf neofetch nfs-utils pkgfile cups
 sudo pkgfile --update
 sudo systemctl enable lightdm
 sudo systemctl enable NetworkManager
