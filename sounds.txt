@@ -2,9 +2,9 @@
 close-enabled=true
 close-file='/usr/share/sounds/close.oga'
 login-enabled=true
-login-file='/usr/share/sounds/login.oga'
+login-file='/usr/share/sounds/new-login.wav'
 logout-enabled=true
-logout-file='/usr/share/sounds/logout.ogg'
+logout-file='/usr/share/sounds/new-logout.wav'
 map-enabled=true
 map-file='/usr/share/sounds/map.oga'
 maximize-enabled=true
