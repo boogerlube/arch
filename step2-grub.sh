@@ -75,8 +75,7 @@ echo "bob ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/bob
 
 #  copy last step to user directory 'cause we gotta reboot!
 
-cp /root/step3.sh /home/bob/
+mkdir /home/bob/arch
+cp /root/* /home/bob/arch/
 
-echo -e ""
-echo -e ""
-echo "Please reboot now"
+echo -e "\n\nPlease reboot now\n"
