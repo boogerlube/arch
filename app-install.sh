@@ -50,7 +50,7 @@ sudo updatedb
 
 
 
-## If gnome apps are slow to lauch execute the line below:
+## If gnome apps are slow to launch execute the line below:
 #sudo pacman -R xdg-desktop-portal-gnome
 
 
