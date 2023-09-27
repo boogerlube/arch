@@ -21,6 +21,10 @@ step2pacs=(
   xdg-utils
   xdg-user-dirs
   btrfs-progs
+  bash-completion
+  cryptsetup
+  man-db
+  pacman-contrib
   )
 
 # Setup timezone and locale
