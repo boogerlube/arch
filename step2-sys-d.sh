@@ -6,25 +6,25 @@ export disk="/dev/nvme0n1p"
 # List of packages to install
 
 step2pacs=(
+  bash-completion
+  btrfs-progs
+  cryptsetup
+  dialog
+  dosfstools
   efibootmgr
+  git
+  iwd
   linux-headers
+  man-db
+  mtools
   networkmanager
   network-manager-applet
-  wpa_supplicant
-  iwd
-  dialog
   os-prober
-  mtools
-  dosfstools
+  pacman-contrib
   reflector
-  git
+  wpa_supplicant
   xdg-utils
   xdg-user-dirs
-  btrfs-progs
-  bash-completion
-  cryptsetup
-  man-db
-  pacman-contrib
   )
 
 # Setup timezone and locale
