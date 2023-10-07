@@ -12,10 +12,10 @@ sudo pacman -S --needed --noconfirm - < arch_pkgs.txt
 xdg-mime default nemo.desktop inode/directory
 
 #set lightdm-slick-greeter as default greeter
-sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
+#sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
 
 #setup cups to start with system
-sudo systemctl enable --now cups
+#sudo systemctl enable --now cups
 
 #update mlocate database
 sudo updatedb

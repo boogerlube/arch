@@ -50,10 +50,6 @@ mkinitcpio -P
 
 # Setup necessary tools
 
-#pacman -S --noconfirm efibootmgr linux-headers networkmanager network-manager-applet wpa_supplicant iwd
-#pacman -S --noconfirm dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
-#pacman -S --noconfirm bash-completion cryptsetup man-db pacman-contrib
-
 pacman -S "${step2pacs[@]}" --noconfirm --needed
 
 

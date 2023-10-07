@@ -50,10 +50,6 @@ mkinitcpio -P
 
 # Setup necessary tools
 
-#pacman -S --noconfirm efibootmgr linux-headers networkmanager network-manager-applet wpa_supplicant iwd
-#pacman -S --noconfirm dialog os-prober mtools dosfstools reflector git bluez bluez-utils usbutils cups xdg-utils xdg-user-dirs btrfs-progs
-#pacman -S --noconfirm bash-completion cryptsetup man-db pacman-contrib
-
 pacman -S "${step2pacs[@]}" --noconfirm --needed
 
 # Add CPU microcode to system
@@ -84,21 +80,28 @@ echo "linux /vmlinuz-linux" >> /boot/loader/entries/arch.conf
 echo "initrd /"$ARCH >> /boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux.img" >> /boot/loader/entries/arch.conf
 # enable or disable zswap
-echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw" >> /boot/loader/entries/arch.conf
-#echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> /boot/loader/entries/arch.conf
+#echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw" >> /boot/loader/entries/arch.conf
+echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> /boot/loader/entries/arch.conf
 echo "default  arch.conf" > /boot/loader/loader.conf
 echo "timeout  4" >> /boot/loader/loader.conf
 echo "console-mode max" >> /boot/loader/loader.conf
 echo "editor   no" >> /boot/loader/loader.conf
 
 
-#  Setup swap
+#  Setup swap file
 
-chattr +C /swap
-read -p 'Swap size in GB? ' MEM
-MEMSIZE="$MEM""G"
-btrfs filesystem mkswapfile --size $MEMSIZE /swap/swapfile
-echo "/swap/swapfile none swap defaults 0 0" | tee -a /etc/fstab
+#chattr +C /swap
+#read -p 'Swap size in GB? ' MEM
+#MEMSIZE="$MEM""G"
+#btrfs filesystem mkswapfile --size $MEMSIZE /swap/swapfile
+#echo "/swap/swapfile none swap defaults 0 0" | tee -a /etc/fstab
+
+#  Setup zram
+
+echo "zram" > /etc/modules-load.d/zram.conf
+echo "options zram num_devices=1" >> /etc/modules-load.d/zram.conf
+echo 'KERNEL=="zram0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="2G" RUN="/usr/bin/mkswap -U clear /dev/zram0", TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
+echo "/dev/zram0     none    swap    sw,pri=100    0 0" >> /etc/fstab
 
 #    Add user
 
