@@ -12,7 +12,7 @@ source ~/.bashrc
 sudo mkdir /etc/samba
 sudo cp smb.conf /etc/samba/
 mkdir ~/.local/bin
-cp scripts/* ~/.local/.bin
+cp scripts/* ~/.local/bin
 chmod +x ~/.local/bin/*.sh
 sudo cp ./sounds/* /usr/share/sounds/
 dconf load /org/cinnamon/sounds/ < sounds.txt
@@ -24,4 +24,4 @@ xdg-mime default nemo.desktop inode/directory
 
 #update pacman.conf for color and threads
 sudo sed -i 's/#Color/Color/' /etc/pacman.conf
-sudo sed -i s/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
+sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf

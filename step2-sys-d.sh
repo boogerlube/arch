@@ -83,7 +83,9 @@ echo "title Arch Linux" > /boot/loader/entries/arch.conf
 echo "linux /vmlinuz-linux" >> /boot/loader/entries/arch.conf
 echo "initrd /"$ARCH >> /boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux.img" >> /boot/loader/entries/arch.conf
+# enable or disable zswap
 echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw" >> /boot/loader/entries/arch.conf
+#echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> /boot/loader/entries/arch.conf
 echo "default  arch.conf" > /boot/loader/loader.conf
 echo "timeout  4" >> /boot/loader/loader.conf
 echo "console-mode max" >> /boot/loader/loader.conf
@@ -110,6 +112,6 @@ echo "bob ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/bob
 
 sudo -ubob mkdir /home/bob/arch
 #mkdir /home/bob/arch
-cp /root/* /home/bob/arch/
+cp --no-preserve=all /root/* /home/bob/arch/
 
 echo -e "\n\nPlease reboot now\n"
