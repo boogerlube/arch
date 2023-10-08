@@ -100,14 +100,14 @@ pacman -S "${hypr3pacs[@]}" --noconfirm --needed
 
 #update databases and enable services
 sudo pkgfile --update
-sudo systemctl enable lightdm
+#sudo systemctl enable lightdm
 sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
 #set lightdm-slick-greeter as default greeter
-sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
+#sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
 
 cd ~
 git clone https://aur.archlinux.org/yay.git
