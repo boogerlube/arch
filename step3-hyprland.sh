@@ -49,7 +49,6 @@ step3pacs=(
   )
 
 hypr3pacs=(
-  adobe-source-code-pro-fonts
   brightnessctl
   dunst
   ffmpeg
