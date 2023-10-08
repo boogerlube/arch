@@ -52,7 +52,6 @@ hypr3pacs=(
   pamixer
   papirus-icon-theme
   pavucontrol
-  pipewire-audio
   pipewire
   pipewire-alsa
   pipewire-pulse
