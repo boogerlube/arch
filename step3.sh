@@ -38,6 +38,7 @@ step3pacs=(
 
 pacman -S "${step3pacs[@]}" --noconfirm --needed
 
+#update databases and enable services
 sudo pkgfile --update
 sudo systemctl enable lightdm
 sudo systemctl enable NetworkManager
@@ -61,6 +62,7 @@ echo 'Include = /etc/pacman.d/chaotic-mirrorlist' | sudo tee -a /etc/pacman.conf
 echo '[multilib]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 
+#install lts kernel
 #sudo pacman -S linux-lts
 #sudo grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -68,4 +70,5 @@ sudo pacman -Sy
 cd yay
 makepkg -si
 
+# chaotic-aur website:
 #https://aur.chaotic.cx
