@@ -90,22 +90,12 @@ hypr3pacs=(
   wf-recorder
   wl-clipboard
   wlogout
-  wofi
   cups
   firefox
-  lightdm
-  lightdm-gtk-greeter
   neofetch
   nfs-utils
-  pipewire
-  pipewire-alsa
-  pipewire-jack
-  pipewire-pulse
-  pipewire-x11-bell
-  pipewire-zeroconf
   pkgfile
   terminator
-  wireplumber
   )
 
 sudo pacman -S "${hypr3pacs[@]}" --noconfirm --needed
