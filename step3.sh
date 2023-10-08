@@ -15,6 +15,18 @@ fi
 
 #read -p "Press [enter] to continue"
 
+# Add chaotic-aur and multilib to pacman
+
+sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+sudo pacman-key --lsign-key 3056513887B78AEB
+sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
+
+echo '[chaotic-aur]' | sudo tee -a /etc/pacman.conf
+echo 'Include = /etc/pacman.d/chaotic-mirrorlist' | sudo tee -a /etc/pacman.conf
+echo '[multilib]' | sudo tee -a /etc/pacman.conf
+echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
+sudo pacman -Sy
+
 # Install Cinnamon DE base + audio + terminal
 
 step3pacs=(
@@ -27,7 +39,7 @@ step3pacs=(
   nfs-utils
   pipewire
   pipewire-alsa
-  pipeware-jack
+  pipewire-jack
   pipewire-pulse
   pipewire-x11-bell
   pipewire-zeroconf
@@ -79,6 +91,7 @@ hypr3pacs=(
   wf-recorder
   wl-clipboard
   wlogout
+  wofi
   cups
   firefox
   lightdm
@@ -87,7 +100,7 @@ hypr3pacs=(
   nfs-utils
   pipewire
   pipewire-alsa
-  pipeware-jack
+  pipewire-jack
   pipewire-pulse
   pipewire-x11-bell
   pipewire-zeroconf
@@ -96,7 +109,9 @@ hypr3pacs=(
   wireplumber
   )
 
-pacman -S "${hypr3pacs[@]}" --noconfirm --needed
+sudo pacman -S "${hypr3pacs[@]}" --noconfirm --needed
+
+read -p "Press [enter] to continue"
 
 #update databases and enable services
 sudo pkgfile --update
@@ -113,20 +128,13 @@ cd ~
 git clone https://aur.archlinux.org/yay.git
 git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
-sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-sudo pacman-key --lsign-key 3056513887B78AEB
-sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
 
-echo '[chaotic-aur]' | sudo tee -a /etc/pacman.conf
-echo 'Include = /etc/pacman.d/chaotic-mirrorlist' | sudo tee -a /etc/pacman.conf
-echo '[multilib]' | sudo tee -a /etc/pacman.conf
-echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 
 #install lts kernel
 #sudo pacman -S linux-lts
 #sudo grub-mkconfig -o /boot/grub/grub.cfg
 
-sudo pacman -Sy
+
 cd yay
 makepkg -si
 

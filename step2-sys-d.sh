@@ -115,6 +115,7 @@ echo "bob ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/bob
 
 sudo -ubob mkdir /home/bob/arch
 #mkdir /home/bob/arch
-cp --no-preserve=all /root/* /home/bob/arch/
+cp /root/* /home/bob/arch/
+chown bob:bob /home/bob/arch/*
 
 echo -e "\n\nPlease reboot now\n"
