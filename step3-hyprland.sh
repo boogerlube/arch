@@ -29,24 +29,6 @@ sudo pacman -Sy
 
 # Install Cinnamon DE base + audio + terminal
 
-step3pacs=(
-  cinnamon
-  cups
-  firefox
-  lightdm
-  lightdm-gtk-greeter
-  neofetch
-  nfs-utils
-  pipewire
-  pipewire-alsa
-  pipewire-jack
-  pipewire-pulse
-  pipewire-x11-bell
-  pipewire-zeroconf
-  pkgfile
-  terminator
-  wireplumber
-  )
 
 hypr3pacs=(
   brightnessctl
@@ -58,6 +40,7 @@ hypr3pacs=(
   hyprpicker-git
   inter-font
   kitty
+  libpulse
   neovim
   noise-suppression-for-voice
   nordic-theme
@@ -69,6 +52,10 @@ hypr3pacs=(
   pamixer
   papirus-icon-theme
   pavucontrol
+  pipewire-audio
+  pipewire
+  pipewire-alsa
+  pipewire-pulse
   playerctl
   polkit-gnome
   rofi
@@ -86,8 +73,8 @@ hypr3pacs=(
   ttf-nerd-fonts-symbols-common
   tumbler
   viewnior
-  waybar-hyprland
   wf-recorder
+  wireplumber
   wl-clipboard
   wlogout
   cups
@@ -118,7 +105,6 @@ git clone https://aur.archlinux.org/yay.git
 git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
 
-
 #install lts kernel
 #sudo pacman -S linux-lts
 #sudo grub-mkconfig -o /boot/grub/grub.cfg
@@ -126,6 +112,8 @@ git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
 cd yay
 makepkg -si
+
+yay -S waybar-hyprland
 
 # chaotic-aur website:
 #https://aur.chaotic.cx

@@ -1,0 +1,6 @@
+pipewire-audio
+libpulse
+pipewire
+pipewire-alsa
+pipewire-pulse
+wireplumber
