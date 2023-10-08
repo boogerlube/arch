@@ -13,7 +13,7 @@ else
   echo 'Offline.';exit
 fi
 
-read -p "Press [enter] to continue"
+#read -p "Press [enter] to continue"
 
 # Install Cinnamon DE base + audio + terminal
 

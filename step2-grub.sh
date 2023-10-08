@@ -75,17 +75,29 @@ fi
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 # UUID=$(blkid -o value ${disk}2 | head -n1)
 UUID=$(blkid -s UUID -o value ${disk}2)
-CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root'
+
+# Choose zswap enabled or disabled for either swapfile or zram respectively.
+
+CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root zswap.enabled=0'
+#CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root'
+
 sed -i "/^GRUB_CMDLINE_LINUX_DEFAULT=/ s|loglevel=3|$CMD &|g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cfg
 
 #  Setup swap
 
-chattr +C /swap
-read -p 'Swap size in GB? ' MEM
-MEMSIZE="$MEM""G"
-btrfs filesystem mkswapfile --size $MEMSIZE /swap/swapfile
-echo "/swap/swapfile none swap defaults 0 0" | tee -a /etc/fstab
+#chattr +C /swap
+#read -p 'Swap size in GB? ' MEM
+#MEMSIZE="$MEM""G"
+#btrfs filesystem mkswapfile --size $MEMSIZE /swap/swapfile
+#echo "/swap/swapfile none swap defaults 0 0" | tee -a /etc/fstab
+
+#  Setup zram
+
+echo "zram" > /etc/modules-load.d/zram.conf
+echo "options zram num_devices=1" >> /etc/modules-load.d/zram.conf
+echo 'KERNEL=="zram0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="2G" RUN="/usr/bin/mkswap -U clear /dev/zram0", TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
+echo "/dev/zram0     none    swap    sw,pri=100    0 0" >> /etc/fstab
 
 #    Add user
 
@@ -99,6 +111,6 @@ echo "bob ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/bob
 
 sudo -ubob mkdir /home/bob/arch
 #mkdir /home/bob/arch
-cp /root/* /home/bob/arch/
+cp --no-preserve=all /root/* /home/bob/arch/
 
 echo -e "\n\nPlease reboot now\n"
