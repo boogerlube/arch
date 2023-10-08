@@ -36,7 +36,67 @@ step3pacs=(
   wireplumber
   )
 
-pacman -S "${step3pacs[@]}" --noconfirm --needed
+hypr3pacs=(
+  adobe-source-code-pro-fonts
+  brightnessctl
+  dunst
+  ffmpeg
+  ffmpegthumbnailer
+  grimblast-git
+  hyprland
+  hyprpicker-git
+  inter-font
+  kitty
+  neovim
+  noise-suppression-for-voice
+  nordic-theme
+  noto-fonts
+  noto-fonts-emoji
+  nwg-look-bin
+  otf-firamono-nerd
+  otf-sora
+  pamixer
+  papirus-icon-theme
+  pavucontrol
+  playerctl
+  polkit-gnome
+  rofi
+  sddm-git
+  starship
+  swaybg
+  swaylock-effects
+  thunar
+  thunar-archive-plugin
+  ttf-comfortaa
+  ttf-fantasque-nerd
+  ttf-icomoon-feather
+  ttf-iosevka-nerd
+  ttf-jetbrains-mono-nerd
+  ttf-nerd-fonts-symbols-common
+  tumbler
+  viewnior
+  waybar-hyprland
+  wf-recorder
+  wl-clipboard
+  wlogout
+  cups
+  firefox
+  lightdm
+  lightdm-gtk-greeter
+  neofetch
+  nfs-utils
+  pipewire
+  pipewire-alsa
+  pipeware-jack
+  pipewire-pulse
+  pipewire-x11-bell
+  pipewire-zeroconf
+  pkgfile
+  terminator
+  wireplumber
+  )
+
+pacman -S "${hypr3pacs[@]}" --noconfirm --needed
 
 #update databases and enable services
 sudo pkgfile --update
