@@ -6,7 +6,7 @@ export disk="/dev/nvme0n1p2"
 
 if [ $(id -u) != 0 ]; 
 then
-   echo "Must run as root" 
+   echo -e "\nMust run as root!\n" 
    exit
 fi
 
