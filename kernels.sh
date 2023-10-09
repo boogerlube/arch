@@ -12,7 +12,7 @@ fi
 
 # load lts kernel if not already loaded
 
-sudo pacman -S --needed --noconfirm linux-lts
+sudo pacman -S linux-lts linux-lts-headers
 
 # determine cpu architecture
 

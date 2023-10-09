@@ -27,7 +27,10 @@ echo '[multilib]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 sudo pacman -Sy
 
-# Install Cinnamon DE base + audio + terminal
+# for some reason freaking adobe-source-code-pro-fonts keeps getting installed
+sudo pacman -R adobe-source-code-pro-fonts
+
+# Install Hyprland + audio + terminal
 
 
 hypr3pacs=(
@@ -40,7 +43,10 @@ hypr3pacs=(
   hyprpicker-git
   inter-font
   kitty
+  libpipewire
+  libva
   libpulse
+  nemo
   neovim
   noise-suppression-for-voice
   nordic-theme
@@ -54,11 +60,13 @@ hypr3pacs=(
   pavucontrol
   pipewire
   pipewire-alsa
+  pipewire-jack
   pipewire-pulse
   playerctl
   polkit-gnome
   rofi
   sddm-git
+  spdlog
   starship
   swaybg
   swaylock-effects
@@ -76,6 +84,8 @@ hypr3pacs=(
   wireplumber
   wl-clipboard
   wlogout
+  wofi
+  zimg
   cups
   firefox
   neofetch
@@ -90,29 +100,33 @@ read -p "Press [enter] to continue"
 
 #update databases and enable services
 sudo pkgfile --update
-#sudo systemctl enable lightdm
 sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
-#set lightdm-slick-greeter as default greeter
-#sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
-
 cd ~
 git clone https://aur.archlinux.org/yay.git
 git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
+# load aur pacs
+
+cd yay
+makepkg -si
+
+yay -S waybar-hyprland
+
+systemctl --user start pipewire.service
+systemctl --user start pipewire-pulse.service
+systemctl --user start wireplumber.service
+
+echo -e "\n\nPlease reboot now.\n"
 
 #install lts kernel
 #sudo pacman -S linux-lts
 #sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 
-cd yay
-makepkg -si
-
-yay -S waybar-hyprland
 
 # chaotic-aur website:
 #https://aur.chaotic.cx
