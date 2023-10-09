@@ -1,6 +1,6 @@
 # select the proper disk
 
-export disk="/dev/nvme0n1p"
+export disk="/dev/nvme0n1p2"
 
 # make sure we run as root 
 
@@ -12,7 +12,7 @@ fi
 
 # load lts kernel if not already loaded
 
-sudo pacman -S linux-lts linux-lts-headers
+pacman -S linux-lts linux-lts-headers
 
 # determine cpu architecture
 
@@ -31,7 +31,7 @@ fi
 
 # get disk UUID
 
-UUID=$(blkid -s UUID -o value ${disk}2)
+UUID=$(blkid -s UUID -o value ${disk})
 
 # create LTS loader
 
