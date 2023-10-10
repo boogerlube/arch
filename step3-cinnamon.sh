@@ -32,10 +32,13 @@ step3pacs=(
   cinnamon
   cups
   firefox
+  libva
   lightdm
   lightdm-gtk-greeter
+  lightdm-slick-greeter
   neofetch
   nfs-utils
+  obsidian-icon-theme
   pipewire
   pipewire-alsa
   pipewire-jack
@@ -45,11 +48,10 @@ step3pacs=(
   pkgfile
   terminator
   wireplumber
+  zimg
   )
 
-sudo pacman -S "${step3pacs[@]}" --needed
-
-read -p "Press [enter] to continue"
+sudo pacman -S "${step3pacs[@]}" --needed --noconfirm
 
 #update databases and enable services
 sudo pkgfile --update
@@ -66,15 +68,12 @@ cd ~
 git clone https://aur.archlinux.org/yay.git
 git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
-
+cd yay
+makepkg -si
 
 #install lts kernel
 #sudo pacman -S linux-lts
 #sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-
-cd yay
-makepkg -si
 
 # chaotic-aur website:
 #https://aur.chaotic.cx
