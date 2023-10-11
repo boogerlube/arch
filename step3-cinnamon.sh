@@ -26,6 +26,11 @@ echo '[multilib]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 sudo pacman -Sy
 
+# update pacman.conf for color and threads
+sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
+
+
 # Install Cinnamon DE base + audio + terminal
 
 step3pacs=(
@@ -53,7 +58,7 @@ step3pacs=(
 
 sudo pacman -S "${step3pacs[@]}" --needed --noconfirm
 
-#update databases and enable services
+# update databases and enable services
 sudo pkgfile --update
 sudo systemctl enable lightdm
 sudo systemctl enable NetworkManager
@@ -61,7 +66,7 @@ sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
-set lightdm-slick-greeter as default greeter
+# set lightdm-slick-greeter as default greeter
 sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
 
 cd ~
