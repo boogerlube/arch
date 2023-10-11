@@ -137,7 +137,7 @@ cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 
 ln -sf /usr/share/zoneinfo/America/Chicago "$rootmnt"/etc/localtime
 arch-chroot "$rootmnt" hwclock --systohc
-read -p 'Press any key" KEYPRESS
+read -p "Press any key" KEYPRESS
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 arch-chroot "$rootmnt" locale-gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
