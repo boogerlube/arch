@@ -9,6 +9,8 @@ export sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 export rootmnt="/mnt"
 USERNAME="bob"
 
+pacman -S --noconfirm whois
+
 # List of packages to install
 
 basepacs=(
