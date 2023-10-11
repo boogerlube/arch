@@ -48,13 +48,16 @@ set_password() {
 # set passwords
 
 echo -e "\nUser Password:"
-USERPASSWORD=$(set_password)
+PASSWORD=$(set_password)
 echo -e "\nLUKS Password:"
 LUKSPASS=$(set_password)
 echo -e "\n"
 
-echo -e "$USERNAME's password: $USERPASSWORD"
+USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
+
+echo -e "$USERNAME's password: $PASSWORD"
 echo -e "LUKS password: $LUKSPASS"
+echo -e "Encrypted password is: $USERPASSWORD"
 read -p "Press any key" KEYPRESS
 
 # choose hostname
@@ -216,7 +219,8 @@ echo "/dev/zram0     none    swap    sw,pri=100    0 0" >> "$rootmnt"/etc/fstab
 
 #passwd root
 arch-chroot "$rootmnt" useradd -m -p "$USERPASSWORD" "$USERNAME"
-echo -e "useradd -m -p $USERPASSWD    $USERNAME"
+echo -e "useradd -m -p $USERPASSWORD    $USERNAME"
+read -p "Press any key" KEYPRESS
 arch-chroot "$rootmnt" useradd -m -p "3kyl65" root
 #arch-chroot "$rootmnt" passwd bob
 #create file bob in /etc/sudoers.d
