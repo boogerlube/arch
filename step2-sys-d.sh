@@ -14,7 +14,6 @@ step2pacs=(
   efibootmgr
   git
   iwd
-  linux-headers
   man-db
   mtools
   networkmanager
@@ -118,4 +117,4 @@ sudo -ubob mkdir /home/bob/arch
 cp /root/* /home/bob/arch/
 chown bob:bob /home/bob/arch/*
 
-echo -e "\n\nPlease reboot now\n"
+echo -e "\n\nPlease exit chroot, unmount the mnt mount and reboot now\n"

@@ -75,8 +75,6 @@ lightdm-settings
 lightdm-slick-greeter
 linux
 linux-firmware
-linux-headers
-linux-lts
 lsof
 man-db
 maui-pix

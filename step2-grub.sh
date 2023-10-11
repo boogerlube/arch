@@ -14,7 +14,6 @@ step2pacs=(
   efibootmgr
   git
   iwd
-  linux-headers
   man-db
   mtools
   networkmanager
