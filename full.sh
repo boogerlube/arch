@@ -50,6 +50,13 @@ USERPASSWORD=$(set_password)
 echo -e "\nLUKS Password:"
 LUKSPASS=$(set_password)
 echo -e "\n"
+
+echo -e "$USERNAME's password: $USERPASSWORD"
+echo -e "LUKS password: $LUKSPASS"
+read -p "Press any key" KEYPRESS
+
+# choose hostname
+
 read -p 'Hostname? ' HOST
 
 # Set the time
