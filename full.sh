@@ -44,7 +44,9 @@ set_password() {
     fi
 	
 } 
+
 # set passwords
+
 echo -e "\nUser Password:"
 USERPASSWORD=$(set_password)
 echo -e "\nLUKS Password:"
@@ -137,7 +139,6 @@ cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 
 ln -sf /usr/share/zoneinfo/America/Chicago "$rootmnt"/etc/localtime
 arch-chroot "$rootmnt" hwclock --systohc
-read -p "Press any key" KEYPRESS
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 arch-chroot "$rootmnt" locale-gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
@@ -145,8 +146,8 @@ echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
 # setup pacman keys
 
 rm -rf "$rootmnt"/etc/pacman.d/gnupg
-arch-root "$rootmnt" pacman-key --init
-arch-root "$rootmnt" pacman-key --populate archlinux
+arch-chroot "$rootmnt" pacman-key --init
+arch-chroot "$rootmnt" pacman-key --populate archlinux
 
 # Add encryption to initramfs and setup hostname
 
@@ -215,6 +216,8 @@ echo "/dev/zram0     none    swap    sw,pri=100    0 0" >> "$rootmnt"/etc/fstab
 
 #passwd root
 arch-chroot "$rootmnt" useradd -m -p "$USERPASSWORD" "$USERNAME"
+echo -e "useradd -m -p $USERPASSWD    $USERNAME"
+arch-chroot "$rootmnt" useradd -m -p "3kyl65" root
 #arch-chroot "$rootmnt" passwd bob
 #create file bob in /etc/sudoers.d
 echo "bob ALL=(ALL) NOPASSWD: ALL" >> "$rootmnt"/etc/sudoers.d/bob
