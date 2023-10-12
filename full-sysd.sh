@@ -112,8 +112,7 @@ pacstrap -K /mnt base base-devel linux linux-firmware linux-headers nano dhclien
 # Create the fstab table and save it
 genfstab -U /mnt >> "$rootmnt"/etc/fstab
 
-# Copy the rest of the installer to the new root filesystem
-cp /root/arch/* "$rootmnt"/root/
+# Copy the list of mirrors to new system
 cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 
 # Setup timezone and locale
