@@ -74,7 +74,7 @@ git clone https://aur.archlinux.org/yay.git
 git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
 cd yay
-makepkg -si
+makepkg -si --noconfirm
 
 #install lts kernel
 #sudo pacman -S linux-lts
