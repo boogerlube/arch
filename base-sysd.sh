@@ -2,14 +2,24 @@
 ##      fix the disk variable otherwise you are gonna have a bad time!
 ######
 
-export disk="/dev/nvme0n1"
-export diskroot="/dev/nvme0n1p2"
-export diskboot="/dev/nvme0n1p1"
-export sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
-export rootmnt="/mnt"
+disk="/dev/nvme0n1"
+rootmnt="/mnt"
 USERNAME="bob"
+sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
+
+# setup partition vars
+
+disk="${disk,,}"
+if [[ $disk == *"nvme"* ]]; then
+  diskroot=$disk"p2"
+  diskboot=$disk"p1"
+else
+   diskroot=$disk"2"
+   diskboot=$disk"1"
+ fi
 
 # gotta have whois to use mkpasswd!
+pacman -Sy
 pacman -S --noconfirm whois
 
 # List of packages to install

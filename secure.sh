@@ -7,12 +7,23 @@ if [[ "$(efivar -d --name 8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode)" -ne 1
    exit
 fi   
 
-export disk="/dev/nvme0n1"
-export diskroot="/dev/nvme0n1p2"
-export diskboot="/dev/nvme0n1p1"
-export sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
-export rootmnt="/mnt"
+# define variables
+
+disk="/dev/nvme0n1"
+rootmnt="/mnt"
 USERNAME="bob"
+sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
+
+# setup partition vars
+
+disk="${disk,,}"
+if [[ $disk == *"nvme"* ]]; then
+  diskroot=$disk"p2"
+  diskboot=$disk"p1"
+else
+   diskroot=$disk"2"
+   diskboot=$disk"1"
+ fi
 
 # gotta have whois to use mkpasswd!
 pacman -Sy
@@ -82,18 +93,11 @@ mkfs.vfat -F32 -n EFI ${diskboot}
 
 # Setup encryption
 echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
-echo -n $LUKSPASS | cryptsetup open ${diskroot} linuxroot
+echo -n $LUKSPASS | cryptsetup open ${diskroot} root
 
 # Make and mount filesystems setup btrfs subvolumes
-mkfs.btrfs -f -L linuxroot /dev/mapper/linuxroot
-mount /dev/mapper/linuxroot /mnt
-btrfs su cr /mnt/home
-btrfs su cr /mnt/srv
-btrfs us cr /mnt/var
-btrfs su cr /mnt/var/log
-btrfs su cr /mnt/var/cache
-btrfs su cr /mnt/var/tmp
-
+mkfs.ext4 -L linuxroot /dev/mapper/root
+mount /dev/mapper/root /mnt
 
 # mount subvolumes
 mkdir /mnt/efi
@@ -104,10 +108,6 @@ reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
 
 # Finally! Install the base system
 pacstrap -K /mnt base base-devel linux linux-firmware linux-headers linux-lts linux-lts-headers util-linux nano dhclient
-
-# For LTS kernel comment out line above and uncomment line below:
-#pacstrap -K /mnt base base-devel linux-lts linux-firmware nano dhclient
-
 
 # Copy the list of mirrors to new system
 cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
@@ -126,7 +126,7 @@ arch-chroot "$rootmnt" pacman-key --init
 arch-chroot "$rootmnt" pacman-key --populate archlinux
 
 #setup kernel cmdline
-echo "quiet rw zswap.enabled=0"
+echo "quiet rw zswap.enabled=0" > "$rootmnt"/etc/kernel/cmdline
 
 #create EFI folder structure
 mkdir -p "$rootmnt"/efi/EFI/Linux
@@ -141,6 +141,7 @@ sed -i \
 sed -i \
     -e '/^#ALL_config/s/^#//' \
     -e '/^#default_uki/s/^#//' \
+    -e '/^#fallback_uki/s/^#//' \
     -e '/^#default_options/s/^#//' \
     -e 's/default_image=/#default_image=/g' \
     "$rootmnt"/etc/mkinitcpio.d/linux.preset    
@@ -149,6 +150,7 @@ sed -i \
 sed -i \
     -e '/^#ALL_config/s/^#//' \
     -e '/^#default_uki/s/^#//' \
+    -e '/^#fallback_uki/s/^#//' \
     -e '/^#default_options/s/^#//' \
     -e 's/default_image=/#default_image=/g' \
     "$rootmnt"/etc/mkinitcpio.d/linux-lts.preset      
@@ -180,6 +182,9 @@ systemctl --root $rootmnt mask systemd-networkd
 
 # Install systemd-boot
 arch-chroot $rootmnt bootctl install --esp-path=/efi
+echo "timeout  3" >> "$rootmnt"/boot/loader/loader.conf
+echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf
+echo "editor   no" >> "$rootmnt"/boot/loader/loader.conf
 
 #  Setup zram
 echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf
