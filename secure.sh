@@ -2,6 +2,11 @@
 ##      fix the disk variable otherwise you are gonna have a bad time!
 ######
 
+if [[ "$(efivar -d --name 8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode)" -ne 1 ]]; then
+   echo -e "\nNot in Secure Boot setup mode"
+   exit
+fi   
+
 export disk="/dev/nvme0n1"
 export diskroot="/dev/nvme0n1p2"
 export diskboot="/dev/nvme0n1p1"
@@ -30,6 +35,7 @@ basepacs=(
   os-prober
   pacman-contrib
   reflector
+  sbctl
   util-linux
   wpa_supplicant
   xdg-utils
@@ -68,18 +74,17 @@ timedatectl set-ntp true
 wipefs -af $disk
 sgdisk --zap-all --clear $disk
 partprobe $disk
-sgdisk -n 0:0:+512MiB -t 0:ef00 -c 0:esp $disk
-sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
+sgdisk -n1:0:+512M -t1:ef00 -c1:EFI -N2 -t2:8304 -c2:LINUXROOT $disk
 partprobe $disk
-mkfs.vfat -F32 -n ESP ${diskboot}
+mkfs.vfat -F32 -n EFI ${diskboot}
 
 # Setup encryption
 echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
-echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+echo -n $LUKSPASS | cryptsetup open ${diskroot} linuxroot
 
 # Make and mount filesystems setup btrfs subvolumes
-mkfs.btrfs -L archlinux /dev/mapper/root
-mount /dev/mapper/root /mnt
+mkfs.btrfs -f -L linuxroot /dev/mapper/linuxroot
+mount /dev/mapper/linuxroot /mnt
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
 btrfs su cr /mnt/@snapshots
@@ -91,8 +96,9 @@ btrfs su cr /mnt/@tmp
 umount /mnt
 
 # mount subvolumes
-mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt
-mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
+mount -o ${sv_opts},subvol=@ /dev/mapper/linuxroot /mnt
+mkdir /mnt/efi
+mount ${diskboot} /mnt/efi
 mount -m -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
 mount -m -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
 mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots
@@ -105,13 +111,11 @@ mount -m -o ${sv_opts},subvol=@tmp /dev/mapper/root /mnt/var/tmp
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
 
 # Finally! Install the base system
-pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient
+pacstrap -K /mnt base base-devel linux linux-firmware linux-headers linux-lts linux-lts-headers util-linux nano dhclient
 
 # For LTS kernel comment out line above and uncomment line below:
 #pacstrap -K /mnt base base-devel linux-lts linux-firmware nano dhclient
 
-# Create the fstab table and save it
-genfstab -U /mnt >> "$rootmnt"/etc/fstab
 
 # Copy the list of mirrors to new system
 cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
@@ -128,8 +132,35 @@ rm -rf "$rootmnt"/etc/pacman.d/gnupg
 arch-chroot "$rootmnt" pacman-key --init
 arch-chroot "$rootmnt" pacman-key --populate archlinux
 
-# Add encryption to initramfs and setup hostname
-sed -i '/^HOOKS=/ s/filesystems/encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
+#setup kernel cmdline
+echo "quiet rw zswap.enabled=0"
+
+#create EFI folder structure
+mkdir -p "$rootmnt"/efi/EFI/Linux
+
+#update mkinicpio hooks to change udev to systemd and add encryption
+sed -i \
+    -e 's/base udev/base systemd/g' \
+    -e 's/keymap consolefont/sd-vconsole sd-encrypt/g' \
+    "$rootmnt"/etc/mkinitcpio.conf
+
+#update mkinitcpio preset file to generate UKIs
+sed -i \
+    -e '/^#ALL_config/s/^#//' \
+    -e '/^#default_uki/s/^#//' \
+    -e '/^#default_options/s/^#//' \
+    -e 's/default_image=/#default_image=/g' \
+    -e "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" \
+    "$rootmnt"/etc/mkinitcpio.d/linux.preset    
+
+#update mkinitcpio preset for lts kernel
+sed -i \
+    -e '/^#ALL_config/s/^#//' \
+    -e '/^#default_uki/s/^#//' \
+    -e '/^#default_options/s/^#//' \
+    -e 's/default_image=/#default_image=/g' \
+    -e "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" \
+    "$rootmnt"/etc/mkinitcpio.d/linux-lts.preset      
 
 echo $HOST > "$rootmnt"/etc/hostname
 arch-chroot "$rootmnt" mkinitcpio -P
@@ -152,33 +183,12 @@ else
   ARCH=""
 fi
 
-# Install systemd-boot and configure it for encryption
-bootctl --path="$rootmnt"/boot install
-mkdir -p "$rootmnt"/boot/loader/entries
-UUID=$(blkid -s UUID -o value ${diskroot})
-echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
-echo "linux /vmlinuz-linux" >> "$rootmnt"/boot/loader/entries/arch.conf
-echo "initrd /"$ARCH >> "$rootmnt"/boot/loader/entries/arch.conf
-echo "initrd /initramfs-linux.img" >> "$rootmnt"/boot/loader/entries/arch.conf
+# setup services
+systemctl --root $rootmnt enable systemd-timesyncd NetworkManager
+systemctl --root $rootmnt mask systemd-networkd
 
-# enable zswap
-#echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw" >> "$rootmnt"/boot/loader/entries/arch.conf
-
-# disable zswap
-echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
-
-echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
-echo "timeout  4" >> "$rootmnt"/boot/loader/loader.conf
-echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf
-echo "editor   no" >> "$rootmnt"/boot/loader/loader.conf
-
-
-#  Setup swap file
-#chattr +C "$rootmnt"/swap
-#read -p 'Swap size in GB? ' MEM
-#MEMSIZE="$MEM""G"
-#btrfs filesystem mkswapfile --size $MEMSIZE "$rootmnt"/swap/swapfile
-#echo "/swap/swapfile none swap defaults 0 0" | tee -a "$rootmnt"/etc/fstab
+# Install systemd-boot
+arch-chroot $rootmnt bootctl install --esp-path=/efi
 
 #  Setup zram
 echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf
@@ -196,6 +206,19 @@ echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> "$rootmnt"/etc/sudoers.d/"$USERNAME"
 mkdir "$rootmnt"/home/"$USERNAME"/arch
 cp * "$rootmnt"/home/"$USERNAME"/arch/
 chown -R 1000:1000 "$rootmnt"/home/"$USERNAME"/arch
+
+arch-chroot "$rootmnt" mkinitcpio -p linux
+
+#setup secure boot
+arch-chroot "$rootmnt" sbctl create-keys
+arch-chroot "$rootmnt" sbctl enroll-keys -m
+arch-chroot "$rootmnt" sbctl sign -s -o /usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed /usr/lib/systemd/boot/efi/systemd-bootx64.efi
+arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/BOOT/BOOTX64.EFI
+arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux.efi
+arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-fallback.efi
+arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-lts.efi
+arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-lts-fallback.efi
+
 
 umount -R /mnt
 echo -e "\n\nPlease reboot now\n"
