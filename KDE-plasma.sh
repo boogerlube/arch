@@ -59,7 +59,7 @@ sudo pacman -S "${step3pacs[@]}" --needed --noconfirm
 
 # update databases and enable services
 sudo pkgfile --update
-sudo systemctl enable gdm
+sudo systemctl enable sddm
 sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
