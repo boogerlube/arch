@@ -7,6 +7,13 @@ rootmnt="/mnt"
 USERNAME="bob"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 
+# Make sure disk device exists before beginning
+
+if ! [ -e $disk ] ; then
+   echo -e "\n\nDevice does not exist!"
+   exit 1
+fi
+
 # setup partition vars
 
 disk="${disk,,}"

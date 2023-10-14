@@ -4,7 +4,7 @@
 
 if [[ "$(efivar -d --name 8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode)" -ne 1 ]]; then
    echo -e "\nNot in Secure Boot setup mode"
-   exit
+   exit 1
 fi   
 
 # define variables
@@ -13,6 +13,13 @@ disk="/dev/nvme0n1"
 rootmnt="/mnt"
 USERNAME="bob"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
+
+# Make sure disk device exists before beginning
+
+if ! [ -e $disk ] ; then
+   echo -e "\n\nDevice does not exist!"
+   exit 2
+fi
 
 # setup partition vars
 
@@ -182,9 +189,9 @@ systemctl --root $rootmnt mask systemd-networkd
 
 # Install systemd-boot
 arch-chroot $rootmnt bootctl install --esp-path=/efi
-echo "timeout  3" >> "$rootmnt"/boot/loader/loader.conf
-echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf
-echo "editor   no" >> "$rootmnt"/boot/loader/loader.conf
+echo "timeout  3" > "$rootmnt"/efi/loader/loader.conf
+echo "console-mode max" >> "$rootmnt"/efi/loader/loader.conf
+echo "editor   no" >> "$rootmnt"/efi/loader/loader.conf
 
 #  Setup zram
 echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf
