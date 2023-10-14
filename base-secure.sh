@@ -57,7 +57,6 @@ basepacs=(
   reflector
   sbctl
   sudo
-  util-linux
   wpa_supplicant
   xdg-utils
   xdg-user-dirs

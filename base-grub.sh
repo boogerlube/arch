@@ -123,7 +123,7 @@ mount -m -o ${sv_opts},subvol=@tmp /dev/mapper/root /mnt/var/tmp
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
 
 # Finally! Install the base system
-pacstrap -K /mnt base base-devel linux linux-firmware linux-headers nano dhclient
+pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient
 
 # For LTS kernel comment out line above and uncomment line below:
 #pacstrap -K /mnt base base-devel linux-lts linux-firmware nano dhclient
