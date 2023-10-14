@@ -171,7 +171,6 @@ else
 fi
 
 # Install grub and configure it for encryption
-
 arch-chroot "$rootmnt" grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 UUID=$(blkid -s UUID -o value ${diskroot})
 
@@ -202,6 +201,10 @@ arch-chroot "$rootmnt" useradd -m -p "$USERPASSWORD" "$USERNAME"
 
 #  create USERNAME file in /etc/sudoers.d
 echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> "$rootmnt"/etc/sudoers.d/"$USERNAME"
+
+# Setup services
+systemctl --root $rootmnt enable systemd-timesyncd NetworkManager
+systemctl --root $rootmnt mask systemd-networkd
 
 #  copy last step to user directory 'cause we gotta reboot!
 mkdir "$rootmnt"/home/"$USERNAME"/arch

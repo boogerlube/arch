@@ -189,7 +189,6 @@ echo "timeout  4" >> "$rootmnt"/boot/loader/loader.conf
 echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf
 echo "editor   no" >> "$rootmnt"/boot/loader/loader.conf
 
-
 #  Setup swap file
 #chattr +C "$rootmnt"/swap
 #read -p 'Swap size in GB? ' MEM
@@ -208,6 +207,10 @@ arch-chroot "$rootmnt" useradd -m -p "$USERPASSWORD" "$USERNAME"
 
 #  create USERNAME file in /etc/sudoers.d
 echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> "$rootmnt"/etc/sudoers.d/"$USERNAME"
+
+# Setup services
+systemctl --root $rootmnt enable systemd-timesyncd NetworkManager
+systemctl --root $rootmnt mask systemd-networkd
 
 #  copy last step to user directory 'cause we gotta reboot!
 mkdir "$rootmnt"/home/"$USERNAME"/arch

@@ -4,7 +4,7 @@ then
    exit
 fi
 
-sudo dhclient
+#sudo dhclient
 ip a
 
 if : >/dev/tcp/8.8.8.8/53; then
@@ -64,7 +64,6 @@ sudo pacman -S "${step3pacs[@]}" --needed --noconfirm
 # update databases and enable services
 sudo pkgfile --update
 sudo systemctl enable lightdm
-sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
