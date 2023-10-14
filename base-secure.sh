@@ -18,7 +18,7 @@ sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 
 if ! [ -e $disk ] ; then
    echo -e "\n\nDevice does not exist!"
-   exit 2
+   exit 1
 fi
 
 # setup partition vars
@@ -69,8 +69,8 @@ set_password() {
 	read -p $'\nPlease re-enter password > ' -rs PASSWD2
     if [ "$PASSWD1" != "$PASSWD2" ]; then
         set_password
-	else
-	    echo "$PASSWD1"
+	  else
+	      echo "$PASSWD1"
     fi
 } 
 
