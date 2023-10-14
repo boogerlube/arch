@@ -37,6 +37,7 @@ basepacs=(
   pacman-contrib
   reflector
   sbctl
+  sudo
   util-linux
   wpa_supplicant
   xdg-utils
@@ -86,27 +87,17 @@ echo -n $LUKSPASS | cryptsetup open ${diskroot} linuxroot
 # Make and mount filesystems setup btrfs subvolumes
 mkfs.btrfs -f -L linuxroot /dev/mapper/linuxroot
 mount /dev/mapper/linuxroot /mnt
-btrfs su cr /mnt/@
-btrfs su cr /mnt/@home
-btrfs su cr /mnt/@snapshots
-btrfs su cr /mnt/@log
-btrfs su cr /mnt/@swap
-btrfs su cr /mnt/@cache
-btrfs su cr /mnt/@libvirt
-btrfs su cr /mnt/@tmp
-umount /mnt
+btrfs su cr /mnt/home
+btrfs su cr /mnt/srv
+btrfs us cr /mnt/var
+btrfs su cr /mnt/var/log
+btrfs su cr /mnt/var/cache
+btrfs su cr /mnt/var/tmp
+
 
 # mount subvolumes
-mount -o ${sv_opts},subvol=@ /dev/mapper/linuxroot /mnt
 mkdir /mnt/efi
 mount ${diskboot} /mnt/efi
-mount -m -o ${sv_opts},subvol=@home /dev/mapper/linuxroot /mnt/home
-mount -m -o ${sv_opts},subvol=@log /dev/mapper/linuxroot /mnt/var/log
-mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/linuxroot /mnt/.snapshots
-mount -m -o ${sv_opts},subvol=@swap /dev/mapper/linuxroot /mnt/swap
-mount -m -o ${sv_opts},subvol=@cache /dev/mapper/linuxroot /mnt/var/cache
-mount -m -o ${sv_opts},subvol=@libvirt /dev/mapper/linuxroot /mnt/var/lib/libvirt
-mount -m -o ${sv_opts},subvol=@tmp /dev/mapper/linuxroot /mnt/var/tmp
 
 # Find the best mirrors for installation
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
