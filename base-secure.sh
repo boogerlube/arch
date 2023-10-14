@@ -46,6 +46,7 @@ basepacs=(
   dosfstools
   efibootmgr
   git
+  inetutils
   iwd
   man-db
   mtools
