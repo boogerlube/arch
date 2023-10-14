@@ -15,6 +15,7 @@ export rootmnt="/mnt"
 USERNAME="bob"
 
 # gotta have whois to use mkpasswd!
+pacman -Sy
 pacman -S --noconfirm whois
 
 # List of packages to install
@@ -99,13 +100,13 @@ umount /mnt
 mount -o ${sv_opts},subvol=@ /dev/mapper/linuxroot /mnt
 mkdir /mnt/efi
 mount ${diskboot} /mnt/efi
-mount -m -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
-mount -m -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
-mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots
-mount -m -o ${sv_opts},subvol=@swap /dev/mapper/root /mnt/swap
-mount -m -o ${sv_opts},subvol=@cache /dev/mapper/root /mnt/var/cache
-mount -m -o ${sv_opts},subvol=@libvirt /dev/mapper/root /mnt/var/lib/libvirt
-mount -m -o ${sv_opts},subvol=@tmp /dev/mapper/root /mnt/var/tmp
+mount -m -o ${sv_opts},subvol=@home /dev/mapper/linuxroot /mnt/home
+mount -m -o ${sv_opts},subvol=@log /dev/mapper/linuxroot /mnt/var/log
+mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/linuxroot /mnt/.snapshots
+mount -m -o ${sv_opts},subvol=@swap /dev/mapper/linuxroot /mnt/swap
+mount -m -o ${sv_opts},subvol=@cache /dev/mapper/linuxroot /mnt/var/cache
+mount -m -o ${sv_opts},subvol=@libvirt /dev/mapper/linuxroot /mnt/var/lib/libvirt
+mount -m -o ${sv_opts},subvol=@tmp /dev/mapper/linuxroot /mnt/var/tmp
 
 # Find the best mirrors for installation
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
@@ -126,6 +127,7 @@ arch-chroot "$rootmnt" hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 arch-chroot "$rootmnt" locale-gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
+echo "KEYMAP=us" > "$rootmnt"/etc/vconsole.conf
 
 # setup pacman keys
 rm -rf "$rootmnt"/etc/pacman.d/gnupg
