@@ -36,6 +36,7 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 step3pacs=(
   plasma
   cups
+  dolphin
   firefox
   libva
   neofetch
