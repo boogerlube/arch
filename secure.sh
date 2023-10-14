@@ -125,9 +125,9 @@ cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 ln -sf /usr/share/zoneinfo/America/Chicago "$rootmnt"/etc/localtime
 arch-chroot "$rootmnt" hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
-arch-chroot "$rootmnt" locale-gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
 echo "KEYMAP=us" > "$rootmnt"/etc/vconsole.conf
+arch-chroot "$rootmnt" locale-gen
 
 # setup pacman keys
 rm -rf "$rootmnt"/etc/pacman.d/gnupg
@@ -152,7 +152,6 @@ sed -i \
     -e '/^#default_uki/s/^#//' \
     -e '/^#default_options/s/^#//' \
     -e 's/default_image=/#default_image=/g' \
-    -e "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" \
     "$rootmnt"/etc/mkinitcpio.d/linux.preset    
 
 #update mkinitcpio preset for lts kernel
@@ -161,7 +160,6 @@ sed -i \
     -e '/^#default_uki/s/^#//' \
     -e '/^#default_options/s/^#//' \
     -e 's/default_image=/#default_image=/g' \
-    -e "s/PRESETS=('default' 'fallback')/PRESETS=('default')/g" \
     "$rootmnt"/etc/mkinitcpio.d/linux-lts.preset      
 
 echo $HOST > "$rootmnt"/etc/hostname
