@@ -196,7 +196,7 @@ echo "initrd /initramfs-linux.img" >> "$rootmnt"/boot/loader/entries/arch.conf
 echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
 
 echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
-echo "timeout  4" >> "$rootmnt"/boot/loader/loader.conf
+echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf
 echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf
 echo "editor   no" >> "$rootmnt"/boot/loader/loader.conf
 
