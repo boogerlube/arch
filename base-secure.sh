@@ -3,21 +3,49 @@
 ######
 
 if [[ "$(efivar -d --name 8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode)" -ne 1 ]]; then
-   echo -e "\nNot in Secure Boot setup mode"
+   cecho "RED" "\nNot in Secure Boot setup mode"
    exit 1
-fi   
+fi
+
+cecho(){
+  RED="\033[1;91m"
+  GREEN="\033[1;92m"  # <-- [0 means not bold
+  YELLOW="\033[1;93m" # <-- [1 means bold
+  CYAN="\033[1;96m"
+	BLUE="\\033[1;94m"
+  NC="\033[0m" # No Color
+
+  printf "${!1}${2} ${NC}\n"
+}
 
 # define variables
-
 disk="/dev/nvme0n1"
 rootmnt="/mnt"
 USERNAME="bob"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
+# Color Codes
+BLACK="\\033[1;30m"
+RED="\\033[1;31m"
+GREEN="\\033[1;32m"
+YELLOW="\\033[1;33m"
+BLUE="\\033[1;34m"
+PURPLE="\\033[1;35m"
+CYAN="\\033[1;36m"
+LTGRAY="\\033[1;37m"
+GRAY="\\033[1;90m"
+LTRED="\\033[1;91m"
+LTGREEN="\\033[1;92m"
+LTYELLOW="\\033[1;93m"
+LTBLUE="\\033[1;94m"
+LTPURPLE="\\033[1;95m"
+LTCYAN="\\033[1;96m"
+WHITE="\\033[1;97m"
+NC="\\033[0m" # no color
 
 # Make sure disk device exists before beginning
 
 if ! [ -e $disk ] ; then
-   echo -e "\n\nDevice does not exist!"
+   cecho "RED" "\n\nDevice does not exist!"
    exit 1
 fi
 
@@ -65,27 +93,28 @@ basepacs=(
 set_password() {
   local PASSWD1=""
 	local PASSWD2=""
-  read -p $'\nPlease enter password > ' -rs PASSWD1
-	read -p $'\nPlease re-enter password > ' -rs PASSWD2
-    if [ "$PASSWD1" != "$PASSWD2" ]; then
+  echo -n -e "$YELLOW""Please enter password > $NC"
+  read -p -rs PASSWD1
+  echo -n -e "$YELLOW""\nPlease re-enter password > $NC"
+  readp -p -rs PASSWD2
+  if [ "$PASSWD1" != "$PASSWD2" ]; then
         set_password
 	  else
 	      echo "$PASSWD1"
-    fi
+  fi
 } 
 
 # set passwords
-
-echo -e "\nUser Password:"
+cecho "CYAN" "\n$USERNAME\'s Password:"
 PASSWORD=$(set_password)
-echo -e "\nLUKS Password:"
+cecho "CYAN" "\nLUKS Password:"
 LUKSPASS=$(set_password)
 echo -e "\n"
-
 USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
 # choose hostname
-read -p 'Hostname? ' HOST
+echo -n -e "\n$LTCYAN""Hostname? $NC"
+read HOST
 
 # Set the time
 timedatectl set-ntp true
@@ -212,7 +241,7 @@ chown -R 1000:1000 "$rootmnt"/home/"$USERNAME"/arch
 
 arch-chroot "$rootmnt" mkinitcpio -p linux
 
-#setup secure boot
+#  setup secure boot
 arch-chroot "$rootmnt" sbctl create-keys
 arch-chroot "$rootmnt" sbctl enroll-keys -m
 arch-chroot "$rootmnt" sbctl sign -s -o /usr/lib/systemd/boot/efi/systemd-bootx64.efi.signed /usr/lib/systemd/boot/efi/systemd-bootx64.efi
@@ -224,4 +253,4 @@ arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-lts-fallback.efi
 
 
 umount -R /mnt
-echo -e "\n\nPlease reboot now\n"
+cecho "GREEN" "\n\nPlease reboot now\n"
