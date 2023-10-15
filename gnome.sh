@@ -38,7 +38,9 @@ step3pacs=(
   cups
   firefox
   gdm
+  gvfs
   libva
+  nautilus
   neofetch
   nfs-utils
   obsidian-icon-theme

@@ -36,8 +36,10 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 step3pacs=(
   mate
   mate-extra
+  caja
   cups
   firefox
+  gvfs
   gnome-terminal
   libva
   lightdm-gtk-greeter-settings

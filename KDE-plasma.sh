@@ -38,6 +38,7 @@ step3pacs=(
   cups
   dolphin
   firefox
+  gvfs
   libva
   neofetch
   nfs-utils

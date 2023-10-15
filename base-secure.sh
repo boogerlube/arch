@@ -2,70 +2,14 @@
 ##      fix the disk variable otherwise you are gonna have a bad time!
 ######
 
-if [[ "$(efivar -d --name 8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode)" -ne 1 ]]; then
-   cecho "RED" "\nNot in Secure Boot setup mode"
-   exit 1
-fi
-
-cecho(){
-  RED="\033[1;91m"
-  GREEN="\033[1;92m"  # <-- [0 means not bold
-  YELLOW="\033[1;93m" # <-- [1 means bold
-  CYAN="\033[1;96m"
-	BLUE="\\033[1;94m"
-  NC="\033[0m" # No Color
-
-  printf "${!1}${2} ${NC}\n"
-}
-
 # define variables
 disk="/dev/nvme0n1"
 rootmnt="/mnt"
 USERNAME="bob"
-sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
-# Color Codes
-BLACK="\\033[1;30m"
-RED="\\033[1;31m"
-GREEN="\\033[1;32m"
-YELLOW="\\033[1;33m"
-BLUE="\\033[1;34m"
-PURPLE="\\033[1;35m"
-CYAN="\\033[1;36m"
-LTGRAY="\\033[1;37m"
-GRAY="\\033[1;90m"
-LTRED="\\033[1;91m"
-LTGREEN="\\033[1;92m"
-LTYELLOW="\\033[1;93m"
-LTBLUE="\\033[1;94m"
-LTPURPLE="\\033[1;95m"
 LTCYAN="\\033[1;96m"
-WHITE="\\033[1;97m"
 NC="\\033[0m" # no color
 
-# Make sure disk device exists before beginning
-
-if ! [ -e $disk ] ; then
-   cecho "RED" "\n\nDevice does not exist!"
-   exit 1
-fi
-
-# setup partition vars
-
-disk="${disk,,}"
-if [[ $disk == *"nvme"* ]]; then
-  diskroot=$disk"p2"
-  diskboot=$disk"p1"
-else
-   diskroot=$disk"2"
-   diskboot=$disk"1"
- fi
-
-# gotta have whois to use mkpasswd!
-pacman -Sy
-pacman -S --noconfirm whois
-
-# List of packages to install
-
+# packages to install
 basepacs=(
   bash-completion
   btrfs-progs
@@ -89,31 +33,71 @@ basepacs=(
   xdg-utils
   xdg-user-dirs
   )
-  
+
+if [[ "$(efivar -d --name 8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode)" -ne 1 ]]; then
+   cecho "RED" "\nNot in Secure Boot setup mode"
+   cecho "RED" "Rebooting into firmware setup (press ctrl-c to exit instead)"
+   sleep 10
+   systemctl reboot --firmware-setup
+   exit 1
+fi
+
+cecho(){
+  RED="\033[1;91m"
+  GREEN="\033[1;92m"  # <-- [0 means not bold
+  YELLOW="\033[1;93m" # <-- [1 means bold
+  CYAN="\033[1;96m"
+	BLUE="\\033[1;94m"
+  NC="\033[0m" # No Color
+
+  printf "${!1}${2} ${NC}\n"
+}
+
 set_password() {
   local PASSWD1=""
 	local PASSWD2=""
-  echo -n -e "$YELLOW""Please enter password > $NC"
-  read -p -rs PASSWD1
-  echo -n -e "$YELLOW""\nPlease re-enter password > $NC"
-  readp -p -rs PASSWD2
-  if [ "$PASSWD1" != "$PASSWD2" ]; then
+  read -p $'\nPlease enter password > ' -rs PASSWD1
+	read -p $'\nPlease re-enter password > ' -rs PASSWD2
+    if [ "$PASSWD1" != "$PASSWD2" ]; then
         set_password
-	  else
-	      echo "$PASSWD1"
-  fi
+	else
+	    echo "$PASSWD1"
+    fi
 } 
 
+# Make sure disk device exists before beginning
+if ! [ -e $disk ] ; then
+   cecho "RED" "\nDevice does not exist!"
+   lsblk
+   exit 1
+fi
+
+# setup partition vars
+disk="${disk,,}"
+if [[ $disk == *"nvme"* ]]; then
+  diskroot=$disk"p2"
+  diskboot=$disk"p1"
+else
+   diskroot=$disk"2"
+   diskboot=$disk"1"
+ fi
+
+# gotta have whois to use mkpasswd!
+pacman -Sy
+pacman -S --noconfirm whois
+
+# List of packages to install
+
 # set passwords
-cecho "CYAN" "\n$USERNAME\'s Password:"
+cecho "CYAN" "\nEnter $USERNAME\'s Password:"
 PASSWORD=$(set_password)
-cecho "CYAN" "\nLUKS Password:"
+cecho "CYAN" "Enter \nLUKS Password:"
 LUKSPASS=$(set_password)
 echo -e "\n"
 USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
 # choose hostname
-echo -n -e "\n$LTCYAN""Hostname? $NC"
+echo -n -e "$LTCYAN""Hostname? $NC"
 read HOST
 
 # Set the time

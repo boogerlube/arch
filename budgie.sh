@@ -38,10 +38,13 @@ step3pacs=(
   cups
   firefox
   gnome-control-center
+  gnome-keyring
   gnome-terminal
+  gvfs
   libva
   lightdm-gtk-greeter-settings
   lightdm-slick-greeter
+  nautilus
   neofetch
   nfs-utils
   obsidian-icon-theme
@@ -53,6 +56,11 @@ step3pacs=(
   pipewire-zeroconf
   pkgfile
   terminator
+  thunar
+  thunar-archive-plugin
+  thunar-media-tags-plugin
+  thunar-shares-plugin
+  thunar-volman
   wireplumber
   xorg
   zimg

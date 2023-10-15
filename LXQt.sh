@@ -37,6 +37,7 @@ step3pacs=(
   lxqt
   cups
   firefox
+  gvfs
   libva
   lightdm
   lightdm-gtk-greeter
@@ -44,6 +45,7 @@ step3pacs=(
   neofetch
   nfs-utils
   obsidian-icon-theme
+  pacmanfm-qt
   pipewire
   pipewire-alsa
   pipewire-jack

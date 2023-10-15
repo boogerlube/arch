@@ -37,6 +37,9 @@ step3pacs=(
   cinnamon
   cups
   firefox
+  gvfs
+  gnome-keyring
+  libsecret
   libva
   lightdm
   lightdm-gtk-greeter

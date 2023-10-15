@@ -6,31 +6,10 @@ disk="/dev/nvme0n1"
 rootmnt="/mnt"
 USERNAME="bob"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
-
-# Make sure disk device exists before beginning
-
-if ! [ -e $disk ] ; then
-   echo -e "\n\nDevice does not exist!"
-   exit 1
-fi
-
-# setup partition vars
-
-disk="${disk,,}"
-if [[ $disk == *"nvme"* ]]; then
-  diskroot=$disk"p2"
-  diskboot=$disk"p1"
-else
-   diskroot=$disk"2"
-   diskboot=$disk"1"
- fi
-
-# gotta have whois to use mkpasswd!
-pacman -Sy
-pacman -S --noconfirm whois
+LTCYAN="\\033[1;96m"
+NC="\\033[0m" # no color
 
 # List of packages to install
-
 basepacs=(
   bash-completion
   btrfs-progs
@@ -52,7 +31,39 @@ basepacs=(
   xdg-utils
   xdg-user-dirs
   )
-  
+
+# Make sure disk device exists before beginning
+if ! [ -e $disk ] ; then
+   cecho "RED" "\nDevice does not exist!"
+   lsblk
+   exit 1
+fi
+
+# setup partition vars
+disk="${disk,,}"
+if [[ $disk == *"nvme"* ]]; then
+  diskroot=$disk"p2"
+  diskboot=$disk"p1"
+else
+   diskroot=$disk"2"
+   diskboot=$disk"1"
+ fi
+
+# gotta have whois to use mkpasswd!
+pacman -Sy
+pacman -S --noconfirm whois
+
+cecho(){
+  RED="\033[1;91m"
+  GREEN="\033[1;92m"  # <-- [0 means not bold
+  YELLOW="\033[1;93m" # <-- [1 means bold
+  CYAN="\033[1;96m"
+	BLUE="\\033[1;94m"
+  NC="\033[0m" # No Color
+
+  printf "${!1}${2} ${NC}\n"
+}
+
 set_password() {
   local PASSWD1=""
 	local PASSWD2=""
@@ -66,13 +77,11 @@ set_password() {
 } 
 
 # set passwords
-
-echo -e "\nUser Password:"
+cecho "CYAN" "\nEnter $USERNAME\'s Password:"
 PASSWORD=$(set_password)
-echo -e "\nLUKS Password:"
+cecho "CYAN" "Enter \nLUKS Password:"
 LUKSPASS=$(set_password)
 echo -e "\n"
-
 USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
 # choose hostname
