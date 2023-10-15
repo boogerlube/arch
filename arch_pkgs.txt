@@ -1,6 +1,4 @@
 a52dec
-amd-ucode
-ansible
 arandr
 arc-gtk-theme
 aria2
@@ -23,7 +21,7 @@ copyq
 cups
 cups-pdf
 czkawka-git
-deepin-icon-theme
+deja-dup
 dhclient
 dialog
 dosfstools
@@ -57,10 +55,12 @@ gprename
 grub
 grub-btrfs
 gvfs-smb
+handbrake
 hplip
 htop
 hunspell
 hunspell-en_us
+inetutils
 inotify-tools
 jasper
 lazygit
@@ -75,9 +75,9 @@ lightdm-settings
 lightdm-slick-greeter
 linux
 linux-firmware
+linux-headers
 lsof
 man-db
-maui-pix
 mcomix
 mediainfo-gui
 mlocate
@@ -85,6 +85,7 @@ mpv
 mtools
 mullvad-vpn
 nano
+ncdu
 neofetch
 neovim
 network-manager-applet
@@ -121,9 +122,9 @@ python-xattr
 rclone
 reflector
 remmina
-ristretto
 rsync
 rtmpdump
+sl
 sshfs
 system-config-printer
 terminator
@@ -131,6 +132,7 @@ terminus-font
 thunar
 thunar-archive-plugin
 thunar-media-tags-plugin
+thunar-shares-plugin
 thunar-volman
 tldr
 traceroute
