@@ -178,6 +178,9 @@ else
   ARCH=""
 fi
 
+systemctl --root $rootmnt enable systemd-timesyncd NetworkManager
+systemctl --root $rootmnt mask systemd-networkd
+
 # Install systemd-boot and configure it for encryption
 bootctl --path="$rootmnt"/boot install
 mkdir -p "$rootmnt"/boot/loader/entries
@@ -186,7 +189,6 @@ echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
 echo "linux /vmlinuz-linux" >> "$rootmnt"/boot/loader/entries/arch.conf
 echo "initrd /"$ARCH >> "$rootmnt"/boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux.img" >> "$rootmnt"/boot/loader/entries/arch.conf
-
 # enable zswap
 #echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw" >> "$rootmnt"/boot/loader/entries/arch.conf
 
