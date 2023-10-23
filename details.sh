@@ -18,6 +18,7 @@ sudo cp ./sounds/* /usr/share/sounds/
 dconf load /org/cinnamon/sounds/ < sounds.txt
 dconf load /org/cinnamon/desktop/keybinding/ < shortcut-settings.conf
 ln -s ~/.local/bin/playlist.sh ~/.local/share/nemo/scripts/
+sudo cp repair.sh /boot
 
 #fix vscode bug with nemo
 xdg-mime default nemo.desktop inode/directory
