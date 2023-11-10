@@ -8,6 +8,11 @@ rootmnt="/mnt"
 USERNAME="bob"
 LTCYAN="\\033[1;96m"
 NC="\\033[0m" # no color
+TIMEZONE=""
+TIMEZONE=$(curl -s http://ip-api.com/line?fields=timezone)
+if [[ $TIMEZONE == ""]]; then
+   $TIMEZONE="America/Chicago"
+fi
 
 # packages to install
 basepacs=(

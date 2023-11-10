@@ -6,6 +6,11 @@ disk="/dev/nvme0n1"
 rootmnt="/mnt"
 USERNAME="bob"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
+TIMEZONE=""
+TIMEZONE=$(curl -s http://ip-api.com/line?fields=timezone)
+if [[ $TIMEZONE == ""]]; then
+   $TIMEZONE="America/Chicago"
+fi
 
 # Make sure disk device exists before beginning
 

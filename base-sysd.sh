@@ -8,6 +8,11 @@ USERNAME="bob"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 LTCYAN="\\033[1;96m"
 NC="\\033[0m" # no color
+TIMEZONE=""
+TIMEZONE=$(curl -s http://ip-api.com/line?fields=timezone)
+if [[ $TIMEZONE == ""]]; then
+   $TIMEZONE="America/Chicago"
+fi
 
 # List of packages to install
 basepacs=(
@@ -55,8 +60,8 @@ pacman -S --noconfirm whois
 
 cecho(){
   RED="\033[1;91m"
-  GREEN="\033[1;92m"  # <-- [0 means not bold
-  YELLOW="\033[1;93m" # <-- [1 means bold
+  GREEN="\033[1;92m"  
+  YELLOW="\033[1;93m" 
   CYAN="\033[1;96m"
 	BLUE="\\033[1;94m"
   NC="\033[0m" # No Color
@@ -143,7 +148,7 @@ genfstab -U /mnt >> "$rootmnt"/etc/fstab
 cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 
 # Setup timezone and locale
-ln -sf /usr/share/zoneinfo/America/Chicago "$rootmnt"/etc/localtime
+ln -sf /usr/share/zoneinfo/"$TIMEZONE" "$rootmnt"/etc/localtime
 arch-chroot "$rootmnt" hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 arch-chroot "$rootmnt" locale-gen
