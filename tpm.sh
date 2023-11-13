@@ -13,6 +13,11 @@ if ! [ -e $disk ] ; then
    exit
 fi
 
+if ! [ -e /dev/tpmrm0 ] ; then
+   echo -e "\n\nTPM 2.0 does not exist!"
+   exit
+fi   
+
 echo -e "Recovery key for $(hostname) generated on $(date).\n" > $(hostname)-recovery.txt
 
 sudo systemd-cryptenroll $disk --recovery-key | tee -a $(hostname)-recovery.txt

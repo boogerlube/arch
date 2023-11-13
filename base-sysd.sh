@@ -1,3 +1,11 @@
+#
+#      █████╗ ██████╗  ██████╗██╗  ██╗    ███████╗███████╗████████╗██╗   ██╗██████╗ 
+#     ██╔══██╗██╔══██╗██╔════╝██║  ██║    ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
+#     ███████║██████╔╝██║     ███████║    ███████╗█████╗     ██║   ██║   ██║██████╔╝
+#     ██╔══██║██╔══██╗██║     ██╔══██║    ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
+#     ██║  ██║██║  ██║╚██████╗██║  ██║    ███████║███████╗   ██║   ╚██████╔╝██║     
+#     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝ 
+
 ######
 ##      fix the disk variable otherwise you are gonna have a bad time!
 ######
@@ -5,14 +13,26 @@
 disk="/dev/nvme0n1"
 rootmnt="/mnt"
 USERNAME="bob"
+DOMAIN="languy.com"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 LTCYAN="\\033[1;96m"
 NC="\\033[0m" # no color
 TIMEZONE=""
-TIMEZONE=$(curl -s http://ip-api.com/line?fields=timezone)
-if [[ $TIMEZONE == ""]]; then
+TIMEZONE=$(curl -s "http://ip-api.com/line?fields=timezone")
+if [[ -z $TIMEZONE ]] ; then
    $TIMEZONE="America/Chicago"
 fi
+
+cecho(){
+  RED="\033[1;91m"
+  GREEN="\033[1;92m"  
+  YELLOW="\033[1;93m" 
+  CYAN="\033[1;96m"
+	BLUE="\\033[1;94m"
+  NC="\033[0m" # No Color
+
+  printf "${!1}${2} ${NC}\n"
+}
 
 # List of packages to install
 basepacs=(
@@ -40,7 +60,7 @@ basepacs=(
 # Make sure disk device exists before beginning
 if ! [ -e $disk ] ; then
    cecho "RED" "\nDevice does not exist!"
-   lsblk
+   lsblk -dpnoNAME|grep -P "/dev/sd|nvme|vd"
    exit 1
 fi
 
@@ -57,17 +77,6 @@ else
 # gotta have whois to use mkpasswd!
 pacman -Sy
 pacman -S --noconfirm whois
-
-cecho(){
-  RED="\033[1;91m"
-  GREEN="\033[1;92m"  
-  YELLOW="\033[1;93m" 
-  CYAN="\033[1;96m"
-	BLUE="\\033[1;94m"
-  NC="\033[0m" # No Color
-
-  printf "${!1}${2} ${NC}\n"
-}
 
 set_password() {
   local PASSWD1=""
@@ -153,6 +162,13 @@ arch-chroot "$rootmnt" hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 arch-chroot "$rootmnt" locale-gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
+
+# setup hosts file
+cat > "$rootmnt"/etc/hosts <<EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   $HOST.$DOMAIN   $HOST
+EOF
 
 # setup pacman keys
 rm -rf "$rootmnt"/etc/pacman.d/gnupg

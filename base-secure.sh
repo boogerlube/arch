@@ -1,3 +1,11 @@
+#
+#      █████╗ ██████╗  ██████╗██╗  ██╗    ███████╗███████╗████████╗██╗   ██╗██████╗ 
+#     ██╔══██╗██╔══██╗██╔════╝██║  ██║    ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
+#     ███████║██████╔╝██║     ███████║    ███████╗█████╗     ██║   ██║   ██║██████╔╝
+#     ██╔══██║██╔══██╗██║     ██╔══██║    ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝ 
+#     ██║  ██║██║  ██║╚██████╗██║  ██║    ███████║███████╗   ██║   ╚██████╔╝██║     
+#     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝ 
+
 ######
 ##      fix the disk variable otherwise you are gonna have a bad time!
 ######
@@ -6,13 +14,25 @@
 disk="/dev/nvme0n1"
 rootmnt="/mnt"
 USERNAME="bob"
+DOMAIN="languy.com"
 LTCYAN="\\033[1;96m"
 NC="\\033[0m" # no color
 TIMEZONE=""
 TIMEZONE=$(curl -s http://ip-api.com/line?fields=timezone)
-if [[ $TIMEZONE == ""]]; then
+if [[ -z $TIMEZONE ]] ; then
    $TIMEZONE="America/Chicago"
 fi
+
+cecho(){
+  RED="\033[1;91m"
+  GREEN="\033[1;92m"  # <-- [0 means not bold
+  YELLOW="\033[1;93m" # <-- [1 means bold
+  CYAN="\033[1;96m"
+	BLUE="\\033[1;94m"
+  NC="\033[0m" # No Color
+
+  printf "${!1}${2} ${NC}\n"
+}
 
 # packages to install
 basepacs=(
@@ -46,17 +66,6 @@ if [[ "$(efivar -d --name 8be4df61-93ca-11d2-aa0d-00e098032b8c-SetupMode)" -ne 1
    systemctl reboot --firmware-setup
    exit 1
 fi
-
-cecho(){
-  RED="\033[1;91m"
-  GREEN="\033[1;92m"  # <-- [0 means not bold
-  YELLOW="\033[1;93m" # <-- [1 means bold
-  CYAN="\033[1;96m"
-	BLUE="\\033[1;94m"
-  NC="\033[0m" # No Color
-
-  printf "${!1}${2} ${NC}\n"
-}
 
 set_password() {
   local PASSWD1=""
@@ -138,12 +147,20 @@ pacstrap -K /mnt base base-devel linux linux-firmware linux-headers linux-lts li
 cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 
 # Setup timezone and locale
-ln -sf /usr/share/zoneinfo/America/Chicago "$rootmnt"/etc/localtime
+ln -sf /usr/share/zoneinfo/"$TIMEZONE" "$rootmnt"/etc/localtime
 arch-chroot "$rootmnt" hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
 echo "KEYMAP=us" > "$rootmnt"/etc/vconsole.conf
 arch-chroot "$rootmnt" locale-gen
+echo $HOST > "$rootmnt"/etc/hostname
+
+# setup hosts file
+cat > "$rootmnt"/etc/hosts <<EOF
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   $HOST.$DOMAIN   $HOST
+EOF
 
 # setup pacman keys
 rm -rf "$rootmnt"/etc/pacman.d/gnupg
@@ -180,7 +197,6 @@ sed -i \
     -e 's/default_image=/#default_image=/g' \
     "$rootmnt"/etc/mkinitcpio.d/linux-lts.preset      
 
-echo $HOST > "$rootmnt"/etc/hostname
 arch-chroot "$rootmnt" mkinitcpio -P
 
 # Setup necessary tools
