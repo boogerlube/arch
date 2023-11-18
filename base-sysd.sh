@@ -60,7 +60,7 @@ basepacs=(
 # Make sure disk device exists before beginning
 if ! [ -e $disk ] ; then
    cecho "RED" "\nDevice does not exist!"
-   lsblk -dpnoNAME|grep -P "/dev/sd|nvme|vd"
+   lsblk -dpnoNAME | grep -P "/dev/sd|nvme|vd"
    exit 1
 fi
 
@@ -156,18 +156,21 @@ genfstab -U /mnt >> "$rootmnt"/etc/fstab
 # Copy the list of mirrors to new system
 cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 
-# Setup timezone and locale
+# Setup timezone, locale and hostname
 ln -sf /usr/share/zoneinfo/"$TIMEZONE" "$rootmnt"/etc/localtime
 arch-chroot "$rootmnt" hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 arch-chroot "$rootmnt" locale-gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
+echo $HOST > "$rootmnt"/etc/hostname
 
 # setup hosts file
 cat > "$rootmnt"/etc/hosts <<EOF
-127.0.0.1   localhost
-::1         localhost
-127.0.1.1   $HOST.$DOMAIN   $HOST
+127.0.0.1    localhost
+::1          localhost
+127.0.1.1    $HOST.$DOMAIN   $HOST
+ff02::1      ip6-allnodes
+ff02::2      ip6-allrouters
 EOF
 
 # setup pacman keys
@@ -175,10 +178,10 @@ rm -rf "$rootmnt"/etc/pacman.d/gnupg
 arch-chroot "$rootmnt" pacman-key --init
 arch-chroot "$rootmnt" pacman-key --populate archlinux
 
-# Add encryption to initramfs and setup hostname
+# Add encryption to initramfs
 sed -i '/^HOOKS=/ s/filesystems/encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
 
-echo $HOST > "$rootmnt"/etc/hostname
+# create initramfs
 arch-chroot "$rootmnt" mkinitcpio -P
 
 # Setup necessary tools

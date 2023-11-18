@@ -94,9 +94,7 @@ hypr3pacs=(
   terminator
   )
 
-sudo pacman -S "${hypr3pacs[@]}"
-
-read -p "Press [enter] to continue"
+sudo pacman -S --needed --noconfirm "${hypr3pacs[@]}"
 
 #update databases and enable services
 sudo pkgfile --update

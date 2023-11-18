@@ -82,7 +82,7 @@ set_password() {
 # Make sure disk device exists before beginning
 if ! [ -e $disk ] ; then
    cecho "RED" "\nDevice does not exist!"
-   lsblk
+   lsblk -dpnoNAME | grep -P "/dev/sd|nvme|vd"
    exit 1
 fi
 

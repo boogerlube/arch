@@ -23,7 +23,7 @@ fi
 # Make sure disk device exists before beginning
 if ! [ -e $disk ] ; then
    cecho "RED" "\nDevice does not exist!"
-   lsblk -dpnoNAME|grep -P "/dev/sd|nvme|vd"
+   lsblk -dpnoNAME | grep -P "/dev/sd|nvme|vd"
    exit 1
 fi
 
@@ -145,9 +145,11 @@ genfstab -U /mnt >> "$rootmnt"/etc/fstab
 
 # Copy the rest of the installer to the new root filesystem
 cp /root/arch/* "$rootmnt"/root/
+
+# copy the newly generated mirrorlist to the new system.
 cp /etc/pacman.d/mirrorlist "$rootmnt"/etc/pacman.d/
 
-# Setup timezone and locale
+# Setup hostname, timezone and locale
 ln -sf /usr/share/zoneinfo/America/Chicago "$rootmnt"/etc/localtime
 arch-chroot "$rootmnt" hwclock --systohc
 sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
