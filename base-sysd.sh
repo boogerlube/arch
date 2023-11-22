@@ -11,6 +11,7 @@
 ######
 
 disk="/dev/nvme0n1"
+ENCRYPT=true
 rootmnt="/mnt"
 USERNAME="bob"
 DOMAIN="languy.com"
@@ -93,8 +94,10 @@ set_password() {
 # set passwords
 cecho "CYAN" "\nEnter $USERNAME\'s Password:"
 PASSWORD=$(set_password)
-cecho "CYAN" "Enter \nLUKS Password:"
-LUKSPASS=$(set_password)
+if $ENCRYPT ; then
+   cecho "CYAN" "Enter \nLUKS Password:"
+   LUKSPASS=$(set_password)
+fi   
 echo -e "\n"
 USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
@@ -112,14 +115,18 @@ sgdisk -n 0:0:+512MiB -t 0:ef00 -c 0:esp $disk
 sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
 partprobe $disk
 mkfs.vfat -F32 -n ESP ${diskboot}
+MAPPING=${diskroot}
 
-# Setup encryption
-echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
-echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+if $ENCRYPT ; then
+   # Setup encryption
+   echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
+   echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+   MAPPING="/dev/mapper/root"
+fi
 
 # Make and mount filesystems setup btrfs subvolumes
-mkfs.btrfs -L archlinux /dev/mapper/root
-mount /dev/mapper/root /mnt
+mkfs.btrfs -L archlinux ${MAPPING}
+mount ${MAPPING} /mnt
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
 btrfs su cr /mnt/@snapshots
@@ -131,15 +138,15 @@ btrfs su cr /mnt/@tmp
 umount /mnt
 
 # mount subvolumes
-mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt
+mount -o ${sv_opts},subvol=@ ${MAPPING} /mnt
 mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
-mount -m -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
-mount -m -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
-mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots
-mount -m -o ${sv_opts},subvol=@swap /dev/mapper/root /mnt/swap
-mount -m -o ${sv_opts},subvol=@cache /dev/mapper/root /mnt/var/cache
-mount -m -o ${sv_opts},subvol=@libvirt /dev/mapper/root /mnt/var/lib/libvirt
-mount -m -o ${sv_opts},subvol=@tmp /dev/mapper/root /mnt/var/tmp
+mount -m -o ${sv_opts},subvol=@home ${MAPPING} /mnt/home
+mount -m -o ${sv_opts},subvol=@log ${MAPPING} /mnt/var/log
+mount -m -o ${sv_opts},subvol=@snapshots ${MAPPING} /mnt/.snapshots
+mount -m -o ${sv_opts},subvol=@swap ${MAPPING} /mnt/swap
+mount -m -o ${sv_opts},subvol=@cache ${MAPPING} /mnt/var/cache
+mount -m -o ${sv_opts},subvol=@libvirt ${MAPPING} /mnt/var/lib/libvirt
+mount -m -o ${sv_opts},subvol=@tmp ${MAPPING} /mnt/var/tmp
 
 # Find the best mirrors for installation
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
@@ -214,10 +221,10 @@ echo "linux /vmlinuz-linux" >> "$rootmnt"/boot/loader/entries/arch.conf
 echo "initrd /"$ARCH >> "$rootmnt"/boot/loader/entries/arch.conf
 echo "initrd /initramfs-linux.img" >> "$rootmnt"/boot/loader/entries/arch.conf
 # enable zswap
-#echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw" >> "$rootmnt"/boot/loader/entries/arch.conf
+#echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw" >> "$rootmnt"/boot/loader/entries/arch.conf
 
 # disable zswap
-echo "options cryptdevice=UUID="$UUID":root:allow-discards root=/dev/mapper/root rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
+echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
 
 echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
 echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf
