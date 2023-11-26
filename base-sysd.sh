@@ -125,7 +125,7 @@ if $ENCRYPT ; then
 fi
 
 # Make and mount filesystems setup btrfs subvolumes
-mkfs.btrfs -L archlinux ${MAPPING}
+mkfs.btrfs -f -L archlinux ${MAPPING}
 mount ${MAPPING} /mnt
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
