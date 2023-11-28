@@ -12,6 +12,7 @@
 
 # define variables
 disk="/dev/nvme0n1"
+ENCRYPT=true
 rootmnt="/mnt"
 USERNAME="bob"
 DOMAIN="languy.com"
@@ -100,13 +101,13 @@ else
 pacman -Sy
 pacman -S --noconfirm whois
 
-# List of packages to install
-
 # set passwords
 cecho "CYAN" "\nEnter $USERNAME\'s Password:"
 PASSWORD=$(set_password)
-cecho "CYAN" "Enter \nLUKS Password:"
-LUKSPASS=$(set_password)
+if $ENCRYPT ; then
+   cecho "CYAN" "Enter \nLUKS Password:"
+   LUKSPASS=$(set_password)
+fi   
 echo -e "\n"
 USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
@@ -125,15 +126,17 @@ sgdisk -n1:0:+512M -t1:ef00 -c1:EFI -N2 -t2:8304 -c2:LINUXROOT $disk
 partprobe $disk
 mkfs.vfat -F32 -n EFI ${diskboot}
 
-# Setup encryption
-echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
-echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+ # Setup encryption
+MAPPING=${diskroot}
+if $ENCRYPT ; then
+   echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
+   echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+   MAPPING="/dev/mapper/root"
+fi
 
-# Make and mount filesystems setup btrfs subvolumes
-mkfs.ext4 -L linuxroot /dev/mapper/root
-mount /dev/mapper/root /mnt
-
-# mount subvolumes
+# Make and mount filesystems
+mkfs.ext4 -L linuxroot ${MAPPING}
+mount ${MAPPING} /mnt
 mkdir /mnt/efi
 mount ${diskboot} /mnt/efi
 
@@ -160,6 +163,8 @@ cat > "$rootmnt"/etc/hosts <<EOF
 127.0.0.1   localhost
 ::1         localhost
 127.0.1.1   $HOST.$DOMAIN   $HOST
+ff02::1     ip6-allnodes
+ff02::2     ip6-allrouters
 EOF
 
 # setup pacman keys
@@ -223,7 +228,7 @@ systemctl --root $rootmnt mask systemd-networkd
 
 # Install systemd-boot
 arch-chroot $rootmnt bootctl install --esp-path=/efi
-echo "timeout  3" > "$rootmnt"/efi/loader/loader.conf
+echo "timeout  0" > "$rootmnt"/efi/loader/loader.conf
 echo "console-mode max" >> "$rootmnt"/efi/loader/loader.conf
 echo "editor   no" >> "$rootmnt"/efi/loader/loader.conf
 
@@ -256,6 +261,6 @@ arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-fallback.efi
 arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-lts.efi
 arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-lts-fallback.efi
 
-
+# All done. Unmount everything and reboot.
 umount -R /mnt
 cecho "GREEN" "\n\nPlease reboot now\n"
