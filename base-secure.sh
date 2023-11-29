@@ -26,8 +26,8 @@ fi
 
 cecho(){
   RED="\033[1;91m"
-  GREEN="\033[1;92m"  # <-- [0 means not bold
-  YELLOW="\033[1;93m" # <-- [1 means bold
+  GREEN="\033[1;92m"  
+  YELLOW="\033[1;93m" 
   CYAN="\033[1;96m"
 	BLUE="\\033[1;94m"
   NC="\033[0m" # No Color

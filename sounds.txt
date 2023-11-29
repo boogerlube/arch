@@ -23,3 +23,5 @@ unmaximize-enabled=true
 unmaximize-file='/usr/share/sounds/unmaximize.oga'
 unplug-enabled=true
 unplug-file='/usr/share/sounds/unplug.oga'
+volume-sound-enabled=true
+volume-sound-file='/usr/share/sounds/volume.oga'
