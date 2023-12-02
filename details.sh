@@ -3,7 +3,7 @@
 
 #sudo chown -R bob:bob ~/arch/
 tar -xvf post-install.tar.gz
-mv -r Wallpapers ~/Pictures/
+mv Wallpapers/ ~/Pictures/
 mv ./arch-shell/.* ~
 cat fstab.txt | sudo tee -a /etc/fstab
 sudo mkdir -p /media/{pinky,share,torrent}
