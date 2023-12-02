@@ -260,6 +260,7 @@ arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux.efi
 arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-fallback.efi
 arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-lts.efi
 arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/Linux/arch-linux-lts-fallback.efi
+arch-chroot "$rootmnt" sbctl sign -s /efi/EFI/systemd/systemd-bootx64.efi
 
 # All done. Unmount everything and reboot.
 umount -R /mnt
