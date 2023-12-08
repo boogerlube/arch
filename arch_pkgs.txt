@@ -63,6 +63,7 @@ hunspell-en_us
 inetutils
 inotify-tools
 jasper
+kid3
 lazygit
 libdca
 libdv
