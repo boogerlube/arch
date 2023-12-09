@@ -6,15 +6,13 @@ IFACE=$(nmcli -t con show --active | awk -F":" 'NR==1{print $4}')
 
 echo -ne "\n Interface "$IFACE" is on connection "$CONNECTION".\n"
 
-echo -ne "\n Did you set the interface?"
+echo -ne "\nAre the interface and connection correct?"
 read yn
 
 # install all required packages.
 sudo pacman -S --needed --noconfirm qemu-full virt-manager dnsmasq dmidecode
 sudo usermod -aG libvirt $USER
 sudo systemctl enable --now libvirtd.service
-
-
 
 # create a bridge interface. Be sure and set the interface correctly.
 sudo nmcli con add type bridge ifname br0 con-name br0 stp no

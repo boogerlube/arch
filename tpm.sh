@@ -24,5 +24,7 @@ echo -e "Recovery key for $(hostname) generated on $(date).\n" > $(hostname)-rec
 sudo systemd-cryptenroll $disk --recovery-key | tee -a $(hostname)-recovery.txt
 if $TPM ; then
   sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7  --tpm2-with-pin=yes $disk
+else 
+  sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 $disk
 fi
 echo -e "\n\n" >> $(hostname)-recovery.txt
