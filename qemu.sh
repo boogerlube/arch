@@ -22,6 +22,9 @@ sudo nmcli con up br0
 sudo nmcli con up bridge-slave-$IFACE
 #sudo nmcli con modify br0 bridge.stp no
 
+echo -ne "\nReady to confirm installation?"
+read yn
+
 # test qemu installation
 sudo virt-host-validate qemu
 
