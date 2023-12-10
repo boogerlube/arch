@@ -27,3 +27,5 @@ sudo virt-host-validate qemu
 
 # use <shift><F12> to release mouse pointer and <shift><F11> to switch full screen mode
 # use <L-CTRL><L-ALT> to release mouse as well.
+# change br0 interface IP4 settings to 
+#            "share with other computers" if using more than 1 nic
