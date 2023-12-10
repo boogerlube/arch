@@ -28,6 +28,11 @@ read yn
 # test qemu installation
 sudo virt-host-validate qemu
 
+# edit libvirt.conf to allow non root access and copy to user config folder
+sed -i 's/#uri_default/uri_default/' /etc/libvirt/libvirt.conf
+mkdir ~/.config/libvirt
+sudo cp /etc/libvirt/libvirt.conf ~/.config/libvirt/
+
 # use <shift><F12> to release mouse pointer and <shift><F11> to switch full screen mode
 # use <L-CTRL><L-ALT> to release mouse as well.
 # change br0 interface IP4 settings to 
