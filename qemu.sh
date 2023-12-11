@@ -29,11 +29,14 @@ read yn
 sudo virt-host-validate qemu
 
 # edit libvirt.conf to allow non root access and copy to user config folder
-sed -i 's/#uri_default/uri_default/' /etc/libvirt/libvirt.conf
-mkdir ~/.config/libvirt
+sudo sed -i 's/#uri_default/uri_default/' /etc/libvirt/libvirt.conf
+if ! [ -e ~/.config/libvirt ] ; then
+   mkdir ~/.config/libvirt
+fi   
 sudo cp /etc/libvirt/libvirt.conf ~/.config/libvirt/
 
 # use <shift><F12> to release mouse pointer and <shift><F11> to switch full screen mode
 # use <L-CTRL><L-ALT> to release mouse as well.
 # change br0 interface IP4 settings to 
 #            "share with other computers" if using more than 1 nic
+

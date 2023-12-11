@@ -215,8 +215,8 @@ arch-chroot "$rootmnt" grub-mkconfig -o /boot/grub/grub.cfg
 
 #  Setup zram
 echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf
-echo "options zram num_devices=1" >> "$rootmnt"/etc/modules-load.d/zram.conf
-echo 'KERNEL=="zram0", ATTR{comp_algorithm}="zstd", ATTR{disksize}="4G" RUN="/usr/bin/mkswap -U clear /dev/zram0", TAG+="systemd"' > "$rootmnt"/etc/udev/rules.d/99-zram.rules
+echo "options zram num_devices=1" > "$rootmnt"/etc/modprobe.d/zram.conf
+echo 'KERNEL=="zram0",ATTR{comp_algorithm}="zstd", ATTR{disksize}="4G" RUN="/usr/bin/mkswap -U clear /dev/zram0", TAG+="systemd"' > "$rootmnt"/etc/udev/rules.d/99-zram.rules
 echo "/dev/zram0     none    swap    sw,pri=100    0 0" >> "$rootmnt"/etc/fstab
 
 #  Add user
