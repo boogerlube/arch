@@ -12,6 +12,7 @@
 
 disk="/dev/nvme0n1"
 ENCRYPT=true
+LTS=false
 rootmnt="/mnt"
 USERNAME="bob"
 DOMAIN="languy.com"
@@ -152,10 +153,13 @@ mount -m -o ${sv_opts},subvol=@tmp ${MAPPING} /mnt/var/tmp
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
 
 # Finally! Install the base system
-pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient
-
-# For LTS kernel comment out line above and uncomment line below:
-#pacstrap -K /mnt base base-devel linux-lts linux-firmware nano dhclient
+if $LTS ; then
+   # Load LTS kernel
+   pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux-firmware util-linux nano dhclient
+else
+   # Load standard kernel
+   pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient  
+fi
 
 # Create the fstab table and save it
 genfstab -U /mnt >> "$rootmnt"/etc/fstab
