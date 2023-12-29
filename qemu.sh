@@ -3,7 +3,11 @@ BRIDGE=false
 # install all required packages.
 sudo pacman -S --needed --noconfirm qemu-full virt-manager dnsmasq dmidecode swtpm
 sudo usermod -aG libvirt $USER
-sudo systemctl enable --now libvirtd.service
+sudo systemctl enable libvirtd.service
+
+# Don't start libvirtd with the enable as it can cause a system fault
+
+sudo systemctl start libvirtd.service
 
 if $BRIDGE ; then 
   # create a bridge interface. Be sure and set the interface correctly.
