@@ -5,7 +5,7 @@ sudo pacman -S --needed --noconfirm qemu-full virt-manager dnsmasq dmidecode swt
 sudo usermod -aG libvirt $USER
 sudo systemctl enable libvirtd.service
 
-# Don't start libvirtd with the enable as it can cause a system fault
+# Don't start libvirtd with the enable as it can cause a system fault.
 
 sudo systemctl start libvirtd.service
 
