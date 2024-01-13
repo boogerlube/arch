@@ -69,6 +69,7 @@ hypr3pacs=(
   spdlog
   starship
   swaybg
+  swayidle
   swaylock-effects
   thunar
   thunar-archive-plugin
@@ -102,6 +103,7 @@ sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
+sudo systemctl enable sddm
 
 cd ~
 git clone https://aur.archlinux.org/yay.git
