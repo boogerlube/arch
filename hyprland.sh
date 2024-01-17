@@ -35,11 +35,15 @@ sudo pacman -R adobe-source-code-pro-fonts
 
 hypr3pacs=(
   brightnessctl
+  cups
   dunst
+  file-roller
+  firefox
   ffmpeg
   ffmpegthumbnailer
   grimblast-git
   hyprland
+  hyprpaper
   hyprpicker-git
   inter-font
   kitty
@@ -47,7 +51,9 @@ hypr3pacs=(
   libva
   libpulse
   nemo
+  neofetch
   neovim
+  nfs-utils
   noise-suppression-for-voice
   nordic-theme
   noto-fonts
@@ -62,6 +68,7 @@ hypr3pacs=(
   pipewire-alsa
   pipewire-jack
   pipewire-pulse
+  pkgfile
   playerctl
   polkit-gnome
   rofi
@@ -71,10 +78,12 @@ hypr3pacs=(
   swaybg
   swayidle
   swaylock-effects
+  terminator
   thunar
   thunar-archive-plugin
   ttf-comfortaa
   ttf-fantasque-nerd
+  ttf-font-awesome
   ttf-icomoon-feather
   ttf-iosevka-nerd
   ttf-jetbrains-mono-nerd
@@ -87,12 +96,6 @@ hypr3pacs=(
   wlogout
   wofi
   zimg
-  cups
-  firefox
-  neofetch
-  nfs-utils
-  pkgfile
-  terminator
   )
 
 sudo pacman -S --needed --noconfirm "${hypr3pacs[@]}"
