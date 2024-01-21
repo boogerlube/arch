@@ -66,6 +66,13 @@ if ! [ -e $disk ] ; then
    exit 1
 fi
 
+# setup pacman keys
+clear
+echo -e "/nPulling pacman keys. Please wait."
+rm -rf /etc/pacman.d/gnupg
+pacman-key --init
+pacman-key --populate archlinux
+
 # setup partition vars
 disk="${disk,,}"
 if [[ $disk == *"nvme"* ]]; then
@@ -93,13 +100,15 @@ set_password() {
 } 
 
 # set passwords
+clear
 cecho "CYAN" "\nEnter $USERNAME\'s Password:"
 PASSWORD=$(set_password)
 if $ENCRYPT ; then
+   clear
    cecho "CYAN" "Enter \nLUKS Password:"
    LUKSPASS=$(set_password)
 fi   
-echo -e "\n"
+echo -e "\n\n"
 USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
 # choose hostname
