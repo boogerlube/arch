@@ -67,11 +67,11 @@ if ! [ -e $disk ] ; then
 fi
 
 # setup pacman keys
-clear
-echo -e "/nPulling pacman keys. Please wait."
-rm -rf /etc/pacman.d/gnupg
-pacman-key --init
-pacman-key --populate archlinux
+#clear
+#echo -e "/nPulling pacman keys. Please wait."
+#rm -rf /etc/pacman.d/gnupg
+#pacman-key --init
+#pacman-key --populate archlinux
 
 # setup partition vars
 disk="${disk,,}"
