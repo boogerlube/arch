@@ -66,12 +66,9 @@ if ! [ -e $disk ] ; then
    exit 1
 fi
 
-# setup pacman keys
-#clear
-#echo -e "/nPulling pacman keys. Please wait."
-#rm -rf /etc/pacman.d/gnupg
-#pacman-key --init
-#pacman-key --populate archlinux
+# Get/set time
+ln -sf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime
+timedatectl set-ntp true
 
 # setup partition vars
 disk="${disk,,}"
@@ -113,9 +110,6 @@ USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
 # choose hostname
 read -p 'Hostname? ' HOST
-
-# Set the time
-timedatectl set-ntp true
 
 # Wipe and partition disks
 wipefs -af $disk
