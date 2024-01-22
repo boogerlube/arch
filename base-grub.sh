@@ -11,38 +11,34 @@
 ######
 
 disk="/dev/nvme0n1"
+ENCRYPT=true
+LTS=false
 rootmnt="/mnt"
 USERNAME="bob"
+DOMAIN="languy.com"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
+LTCYAN="\\033[1;96m"
+NC="\\033[0m" # no color
+
+
+# setup timezones for install
 TIMEZONE=""
 TIMEZONE=$(curl -s "http://ip-api.com/line?fields=timezone")
 if [[ -z $TIMEZONE ]] ; then
-   $TIMEZONE="America/Chicago"
+   TIMEZONE="America/Chicago"
 fi
 
-# Make sure disk device exists before beginning
-if ! [ -e $disk ] ; then
-   cecho "RED" "\nDevice does not exist!"
-   lsblk -dpnoNAME | grep -P "/dev/sd|nvme|vd"
-   exit 1
-fi
+cecho(){
+  RED="\033[1;91m"
+  GREEN="\033[1;92m"  
+  YELLOW="\033[1;93m" 
+  CYAN="\033[1;96m"
+	BLUE="\\033[1;94m"
+  NC="\033[0m" # No Color
 
-# setup partition vars
-disk="${disk,,}"
-if [[ $disk == *"nvme"* ]]; then
-  diskroot=$disk"p2"
-  diskboot=$disk"p1"
-else
-   diskroot=$disk"2"
-   diskboot=$disk"1"
- fi
-
-# gotta have whois to use mkpasswd!
-pacman -Sy
-pacman -S --noconfirm whois
-
+  printf "${!1}${2} ${NC}\n"
+}
 # List of packages to install
-
 basepacs=(
   bash-completion
   btrfs-progs
@@ -65,7 +61,34 @@ basepacs=(
   xdg-utils
   xdg-user-dirs
   )
-  
+
+# Make sure disk device exists before beginning
+if ! [ -e $disk ] ; then
+   cecho "RED" "\nDevice does not exist!"
+   lsblk -dpnoNAME | grep -P "/dev/sd|nvme|vd"
+   exit 1
+fi
+
+# Get/set time because Arch will freak if the clock ain't right....
+ln -sf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime
+timedatectl set-ntp true
+sleep 5
+hwclock --systohc
+
+# setup partition vars
+disk="${disk,,}"
+if [[ $disk == *"nvme"* ]]; then
+  diskroot=$disk"p2"
+  diskboot=$disk"p1"
+else
+   diskroot=$disk"2"
+   diskboot=$disk"1"
+ fi
+
+# gotta have whois to use mkpasswd!
+pacman -Sy
+pacman -S --noconfirm whois
+
 set_password() {
   local PASSWD1=""
 	local PASSWD2=""
@@ -79,13 +102,15 @@ set_password() {
 } 
 
 # set passwords
-
-echo -e "\nUser Password:"
+clear
+cecho "CYAN" "\nEnter $USERNAME\'s Password:"
 PASSWORD=$(set_password)
-echo -e "\nLUKS Password:"
-LUKSPASS=$(set_password)
-echo -e "\n"
-
+if $ENCRYPT ; then
+   clear
+   cecho "CYAN" "Enter \nLUKS Password:"
+   LUKSPASS=$(set_password)
+fi   
+echo -e "\n\n"
 USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 
 # choose hostname
@@ -102,14 +127,18 @@ sgdisk -n 0:0:+512MiB -t 0:ef00 -c 0:esp $disk
 sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
 partprobe $disk
 mkfs.vfat -F32 -n ESP ${diskboot}
+MAPPING=${diskroot}
 
 # Setup encryption
-echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
-echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+if $ENCRYPT ; then
+   echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
+   echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+   MAPPING="/dev/mapper/root"
+fi
 
 # Make and mount filesystems setup btrfs subvolumes
-mkfs.btrfs -L archlinux /dev/mapper/root
-mount /dev/mapper/root /mnt
+mkfs.btrfs -f -L archlinux ${MAPPING}
+mount ${MAPPING} /mnt
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
 btrfs su cr /mnt/@snapshots
@@ -121,24 +150,27 @@ btrfs su cr /mnt/@tmp
 umount /mnt
 
 # mount subvolumes
-mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt
+mount -o ${sv_opts},subvol=@ ${MAPPING} /mnt
 mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
-mount -m -o ${sv_opts},subvol=@home /dev/mapper/root /mnt/home
-mount -m -o ${sv_opts},subvol=@log /dev/mapper/root /mnt/var/log
-mount -m -o ${sv_opts},subvol=@snapshots /dev/mapper/root /mnt/.snapshots
-mount -m -o ${sv_opts},subvol=@swap /dev/mapper/root /mnt/swap
-mount -m -o ${sv_opts},subvol=@cache /dev/mapper/root /mnt/var/cache
-mount -m -o ${sv_opts},subvol=@libvirt /dev/mapper/root /mnt/var/lib/libvirt
-mount -m -o ${sv_opts},subvol=@tmp /dev/mapper/root /mnt/var/tmp
+mount -m -o ${sv_opts},subvol=@home ${MAPPING} /mnt/home
+mount -m -o ${sv_opts},subvol=@log ${MAPPING} /mnt/var/log
+mount -m -o ${sv_opts},subvol=@snapshots ${MAPPING} /mnt/.snapshots
+mount -m -o ${sv_opts},subvol=@swap ${MAPPING} /mnt/swap
+mount -m -o ${sv_opts},subvol=@cache ${MAPPING} /mnt/var/cache
+mount -m -o ${sv_opts},subvol=@libvirt ${MAPPING} /mnt/var/lib/libvirt
+mount -m -o ${sv_opts},subvol=@tmp ${MAPPING} /mnt/var/tmp
 
 # Find the best mirrors for installation
 reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
 
 # Finally! Install the base system
-pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient
-
-# For LTS kernel comment out line above and uncomment line below:
-#pacstrap -K /mnt base base-devel linux-lts linux-firmware nano dhclient
+if $LTS ; then
+   # Load LTS kernel
+   pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux-firmware util-linux nano dhclient
+else
+   # Load standard kernel
+   pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient  
+fi
 
 # Create the fstab table and save it
 genfstab -U /mnt >> "$rootmnt"/etc/fstab
@@ -159,9 +191,11 @@ echo $HOST > "$rootmnt"/etc/hostname
 
 # setup hosts file
 cat > "$rootmnt"/etc/hosts <<EOF
-127.0.0.1   localhost
-::1         localhost
-127.0.1.1   $HOST.$DOMAIN   $HOST
+127.0.0.1    localhost
+::1          localhost
+127.0.1.1    $HOST.$DOMAIN   $HOST
+ff02::1      ip6-allnodes
+ff02::2      ip6-allrouters
 EOF
 
 # setup pacman keys
@@ -199,6 +233,7 @@ UUID=$(blkid -s UUID -o value ${diskroot})
 
 # Choose zswap disabled.
 CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root zswap.enabled=0'
+
 # Choose zswap enabled.
 #CMD='cryptdevice=UUID='$UUID':root:allow-discards root=/dev/mapper/root'
 
