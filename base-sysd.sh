@@ -19,10 +19,12 @@ DOMAIN="languy.com"
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 LTCYAN="\\033[1;96m"
 NC="\\033[0m" # no color
+
+# setup timezones for install
 TIMEZONE=""
 TIMEZONE=$(curl -s "http://ip-api.com/line?fields=timezone")
 if [[ -z $TIMEZONE ]] ; then
-   $TIMEZONE="America/Chicago"
+   TIMEZONE="America/Chicago"
 fi
 
 cecho(){
@@ -66,9 +68,11 @@ if ! [ -e $disk ] ; then
    exit 1
 fi
 
-# Get/set time
+# Get/set time because Arch will freak if the clock ain't right....
 ln -sf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime
 timedatectl set-ntp true
+sleep 5
+hwclock --systohc
 
 # setup partition vars
 disk="${disk,,}"
@@ -78,7 +82,7 @@ if [[ $disk == *"nvme"* ]]; then
 else
    diskroot=$disk"2"
    diskboot=$disk"1"
- fi
+fi
 
 # gotta have whois to use mkpasswd!
 pacman -Sy
