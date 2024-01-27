@@ -161,7 +161,7 @@ mount -m -o ${sv_opts},subvol=@libvirt ${MAPPING} /mnt/var/lib/libvirt
 mount -m -o ${sv_opts},subvol=@tmp ${MAPPING} /mnt/var/tmp
 
 # Find the best mirrors for installation
-reflector -c us -f 20 -l 15 --protocol https --save /etc/pacman.d/mirrorlist
+reflector --verbose --age 12 --latest 200 --score 50 --completion-percent 98 --sort rate --save /etc/pacman.d/mirrorlist
 
 # Finally! Install the base system
 if $LTS ; then
