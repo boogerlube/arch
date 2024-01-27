@@ -88,6 +88,7 @@ hypr3pacs=(
   ttf-jetbrains-mono-nerd
   ttf-nerd-fonts-symbols-common
   tumbler
+  udiskie
   viewnior
   wf-recorder
   wireplumber
