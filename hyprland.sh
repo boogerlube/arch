@@ -27,8 +27,7 @@ echo '[multilib]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 sudo pacman -Sy
 
-# for some reason freaking adobe-source-code-pro-fonts keeps getting installed
-sudo pacman -R adobe-source-code-pro-fonts
+
 
 # Install Hyprland + audio + terminal
 
@@ -58,7 +57,7 @@ hypr3pacs=(
   nordic-theme
   noto-fonts
   noto-fonts-emoji
-  nwg-look-bin
+  nwg-look
   otf-firamono-nerd
   otf-sora
   pamixer
