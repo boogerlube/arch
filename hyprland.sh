@@ -34,6 +34,8 @@ sudo pacman -Sy
 
 hypr3pacs=(
   brightnessctl
+  cava
+  cmus
   cups
   dunst
   file-roller
@@ -90,6 +92,7 @@ hypr3pacs=(
   tumbler
   udiskie
   viewnior
+  waybar
   wf-recorder
   wireplumber
   wl-clipboard
@@ -108,6 +111,9 @@ sudo systemctl enable fstrim.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 sudo systemctl enable sddm
 
+# Add user to input group for waybar
+sudo usermod -aG input $USER
+
 cd ~
 git clone https://aur.archlinux.org/yay.git
 git clone https://github.com/AdnanHodzic/auto-cpufreq.git
@@ -117,7 +123,8 @@ git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 cd yay
 makepkg -si
 
-yay -S waybar-hyprland
+#yay -S waybar-hyprland
+#yay -S waybar-hyprland-git
 
 systemctl --user start pipewire.service
 systemctl --user start pipewire-pulse.service
