@@ -141,7 +141,7 @@ mkdir /mnt/efi
 mount ${diskboot} /mnt/efi
 
 # Find the best mirrors for installation
-reflector --verbose --age 12 --latest 200 --score 50 --completion-percent 98 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --verbose -l 25 --sort rate --protocol https --save /etc/pacman.d/mirrorlist
 
 # Finally! Install the base system
 pacstrap -K /mnt base base-devel linux linux-firmware linux-headers linux-lts linux-lts-headers util-linux nano dhclient

@@ -42,6 +42,7 @@ hypr3pacs=(
   firefox
   ffmpeg
   ffmpegthumbnailer
+  flameshot-git
   grimblast-git
   hyprland
   hyprpaper

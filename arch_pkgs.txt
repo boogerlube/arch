@@ -14,9 +14,11 @@ bluez-utils
 btop
 btrfs-progs
 calibre
+cava
 chaotic-keyring
 chaotic-mirrorlist
 cinnamon
+cmus
 copyq
 cups
 cups-pdf
@@ -36,7 +38,6 @@ faad2
 file-roller
 filezilla
 firefox
-flameshot
 foliate
 freerdp
 fzf

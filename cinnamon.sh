@@ -37,6 +37,7 @@ step3pacs=(
   cinnamon
   cups
   firefox
+  flameshot
   gvfs
   gnome-keyring
   libsecret
