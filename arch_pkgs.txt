@@ -17,7 +17,6 @@ calibre
 cava
 chaotic-keyring
 chaotic-mirrorlist
-cinnamon
 cmus
 copyq
 cups

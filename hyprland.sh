@@ -126,6 +126,10 @@ makepkg -si
 
 #yay -S waybar-hyprland
 #yay -S waybar-hyprland-git
+ysy -S archlinux-themes-sddm
+
+sudo echo "[Theme]" > /etc/sddm.conf
+sudo echo "Current=archlinux-simplyblack" >> /etc/sddm.conf
 
 systemctl --user start pipewire.service
 systemctl --user start pipewire-pulse.service
