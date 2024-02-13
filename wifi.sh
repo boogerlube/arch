@@ -1,3 +1,4 @@
+rfkill unblock all
 iwctl device list
 iwctl station wlan0 get-networks
 iwctl station wlan0 connect UCanHazWiFi

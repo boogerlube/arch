@@ -13,10 +13,7 @@ else
   echo 'Offline.';exit
 fi
 
-#read -p "Press [enter] to continue"
-
 # Add chaotic-aur and multilib to pacman
-
 sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
 sudo pacman-key --lsign-key 3056513887B78AEB
 sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
@@ -27,11 +24,11 @@ echo '[multilib]' | sudo tee -a /etc/pacman.conf
 echo 'Include = /etc/pacman.d/mirrorlist' | sudo tee -a /etc/pacman.conf
 sudo pacman -Sy
 
-
+# update pacman.conf for color and threads
+sudo sed -i 's/#Color/Color/' /etc/pacman.conf
+sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
 # Install Hyprland + audio + terminal
-
-
 hypr3pacs=(
   brightnessctl
   cava
@@ -115,33 +112,28 @@ sudo systemctl enable sddm
 # Add user to input group for waybar
 sudo usermod -aG input $USER
 
+#clone tools not in pacman
 cd ~
 git clone https://aur.archlinux.org/yay.git
 git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
 # load aur pacs
-
 cd yay
 makepkg -si
-
 #yay -S waybar-hyprland
 #yay -S waybar-hyprland-git
-ysy -S archlinux-themes-sddm
+yay -S archlinux-themes-sddm
 
-sudo echo "[Theme]" > /etc/sddm.conf
-sudo echo "Current=archlinux-simplyblack" >> /etc/sddm.conf
+#Setup theme for sddm
+echo '[Theme]' | sudo tee /etc/sddm.conf
+echo 'Current=archlinux-simplyblack' | sudo tee -a /etc/sddm.conf
 
+#start sound services
 systemctl --user start pipewire.service
 systemctl --user start pipewire-pulse.service
 systemctl --user start wireplumber.service
 
 echo -e "\n\nPlease reboot now.\n"
-
-#install lts kernel
-#sudo pacman -S linux-lts
-#sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-
 
 # chaotic-aur website:
 #https://aur.chaotic.cx
