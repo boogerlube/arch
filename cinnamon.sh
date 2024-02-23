@@ -57,6 +57,7 @@ step3pacs=(
   pkgfile
   terminator
   wireplumber
+  yay
   zimg
   )
 
@@ -67,17 +68,18 @@ sudo pkgfile --update
 sudo systemctl enable lightdm
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
+sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
 # set lightdm-slick-greeter as default greeter
 sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf
 
-cd ~
-git clone https://aur.archlinux.org/yay.git
-git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+#cd ~
+#git clone https://aur.archlinux.org/yay.git
+#git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
-cd yay
-makepkg -si --noconfirm
+#cd yay
+#makepkg -si --noconfirm
 
 #install lts kernel
 #sudo pacman -S linux-lts

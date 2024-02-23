@@ -1,12 +1,13 @@
 BRIDGE=false
 
 # install all required packages.
-sudo pacman -S --needed --noconfirm qemu-full virt-manager dnsmasq dmidecode swtpm
+sudo pacman -S --needed --noconfirm qemu-full virt-manager dnsmasq dmidecode swtpm virt-viewer guestfs-tools
 sudo usermod -aG libvirt $USER
 sudo systemctl enable libvirtd.service
 
-# Don't start libvirtd with the enable as it can cause a system fault.
+#yay -S tuned
 
+# Don't start libvirtd with the enable as it can cause a system fault.
 sudo systemctl start libvirtd.service
 
 if $BRIDGE ; then 

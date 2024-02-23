@@ -64,6 +64,7 @@ sudo pkgfile --update
 sudo systemctl enable sddm
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
+sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
 cd ~

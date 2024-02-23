@@ -66,6 +66,7 @@ sudo pkgfile --update
 sudo systemctl enable lightdm
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
+sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
 # set lightdm-slick-greeter as default greeter

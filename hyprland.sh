@@ -96,6 +96,8 @@ hypr3pacs=(
   wl-clipboard
   wlogout
   wofi
+  xdg-desktop-portal-hyprland
+  yay
   zimg
   )
 
@@ -106,6 +108,7 @@ sudo pkgfile --update
 sudo systemctl enable NetworkManager
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
+sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 sudo systemctl enable sddm
 
@@ -113,13 +116,13 @@ sudo systemctl enable sddm
 sudo usermod -aG input $USER
 
 #clone tools not in pacman
-cd ~
-git clone https://aur.archlinux.org/yay.git
-git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+#cd ~
+#git clone https://aur.archlinux.org/yay.git
+#git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
 # load aur pacs
-cd yay
-makepkg -si
+#cd yay
+#makepkg -si
 #yay -S waybar-hyprland
 #yay -S waybar-hyprland-git
 yay -S archlinux-themes-sddm
