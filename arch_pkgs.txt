@@ -41,6 +41,7 @@ foliate
 freerdp
 fzf
 gdu
+geany
 git
 gnome-calculator
 gnome-characters
@@ -87,12 +88,11 @@ mtools
 mullvad-vpn
 nano
 ncdu
-neofetch
-neovim
 network-manager-applet
 networkmanager
 networkmanager-openvpn
 nfs-utils
+nload
 nnn
 notepadqq
 obsidian-icon-theme

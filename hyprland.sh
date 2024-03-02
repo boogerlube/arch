@@ -35,6 +35,7 @@ hypr3pacs=(
   cmus
   cups
   dunst
+  fastfetch
   file-roller
   firefox
   ffmpeg
@@ -50,7 +51,6 @@ hypr3pacs=(
   libva
   libpulse
   nemo
-  neofetch
   neovim
   nfs-utils
   noise-suppression-for-voice

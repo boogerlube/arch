@@ -36,13 +36,13 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 step3pacs=(
   lxqt
   cups
+  fastfetch
   firefox
   gvfs
   libva
   lightdm
   lightdm-gtk-greeter
   lightdm-slick-greeter
-  neofetch
   nfs-utils
   obsidian-icon-theme
   pacmanfm-qt

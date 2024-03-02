@@ -36,6 +36,7 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 step3pacs=(
   cinnamon
   cups
+  fastfetch
   firefox
   flameshot
   gvfs
@@ -45,7 +46,6 @@ step3pacs=(
   lightdm
   lightdm-gtk-greeter
   lightdm-slick-greeter
-  neofetch
   nfs-utils
   obsidian-icon-theme
   pipewire

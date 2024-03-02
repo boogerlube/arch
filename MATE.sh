@@ -34,17 +34,17 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 # Install MATE DE base + audio + terminal
 
 step3pacs=(
-  mate
-  mate-extra
   caja
   cups
+  fastfetch
   firefox
   gvfs
   gnome-terminal
   libva
   lightdm-gtk-greeter-settings
   lightdm-slick-greeter
-  neofetch
+  mate
+  mate-extra
   nfs-utils
   obsidian-icon-theme
   pipewire

@@ -36,12 +36,12 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 step3pacs=(
   gnome
   cups
+  fastfetch
   firefox
   gdm
   gvfs
   libva
   nautilus
-  neofetch
   nfs-utils
   obsidian-icon-theme
   pipewire

@@ -36,6 +36,7 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 step3pacs=(
   budgie-desktop
   cups
+  fastfetch
   firefox
   gnome-control-center
   gnome-keyring
@@ -45,7 +46,6 @@ step3pacs=(
   lightdm-gtk-greeter-settings
   lightdm-slick-greeter
   nautilus
-  neofetch
   nfs-utils
   obsidian-icon-theme
   pipewire

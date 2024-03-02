@@ -1,6 +1,6 @@
-export sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
-export disk="nvme0n1"
-export rootmnt="/mnt"
+sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
+disk="/dev/nvme0n1"
+rootmnt="/mnt"
 
 # Make sure disk device exists before beginning
 if ! [ -e $disk ] ; then
@@ -12,15 +12,15 @@ fi
 # setup partition vars
 disk="${disk,,}"
 if [[ $disk == *"nvme"* ]]; then
-  export diskroot=$disk"p2"
-  export diskboot=$disk"p1"
+  diskroot=$disk"p2"
+  diskboot=$disk"p1"
 else
-   export diskroot=$disk"2"
-   export diskboot=$disk"1"
+  diskroot=$disk"2"
+  diskboot=$disk"1"
  fi
 
 #Open up encrypted root partition
-cryptsetup open /dev/$diskroot root
+cryptsetup open $diskroot root
 
 # mount all subvols and boot partition
 mount -o ${sv_opts},subvol=@ /dev/mapper/root /mnt

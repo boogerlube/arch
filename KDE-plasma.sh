@@ -34,15 +34,15 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 # Install KDE-plasma DE base + audio + terminal
 
 step3pacs=(
-  plasma
   cups
   dolphin
+  fastfetch
   firefox
   gvfs
   libva
-  neofetch
   nfs-utils
   obsidian-icon-theme
+  plasma
   pipewire
   pipewire-alsa
   pipewire-jack
