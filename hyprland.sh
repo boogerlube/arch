@@ -71,7 +71,7 @@ hypr3pacs=(
   playerctl
   polkit-gnome
   rofi
-  sddm-git
+  sddm
   spdlog
   starship
   swaybg
