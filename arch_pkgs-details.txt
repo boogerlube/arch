@@ -1,0 +1,152 @@
+a52dec
+arandr
+arc-gtk-theme
+aria2
+atomicparsley
+audacious
+base
+base-devel
+bat
+bind
+blueman
+bluez
+bluez-utils
+btop
+btrfs-progs
+calibre
+cava
+chaotic-keyring
+chaotic-mirrorlist
+cmus
+copyq
+cups
+cups-pdf
+czkawka-git
+deja-dup
+dhclient
+dialog
+dosfstools
+downgrade
+ebook-tools
+efibootmgr
+evolution
+evolution-ews
+eza
+faac
+faad2
+file-roller
+filezilla
+firefox
+foliate
+freerdp
+fzf
+gdu
+geany
+git
+gnome-calculator
+gnome-characters
+gnome-clocks
+gnome-disk-utility
+gnome-keyring
+gnome-screenshot
+gnome-system-monitor
+gnome-terminal
+google-chrome
+gprename
+grub
+grub-btrfs
+gvfs-smb
+handbrake
+hplip
+htop
+hunspell
+hunspell-en_us
+inetutils
+inotify-tools
+jasper
+jetbrains-mono-nerd
+kid3
+lazygit
+libdca
+libdv
+libmad
+libmpeg2
+libreoffice-fresh
+linux-headers
+lsof
+man-db
+mcomix
+mediainfo-gui
+mlocate
+mpv
+mtools
+mullvad-vpn
+nano
+ncdu
+network-manager-applet
+networkmanager
+networkmanager-openvpn
+nfs-utils
+nload
+nnn
+notepadqq
+obsidian-icon-theme
+okular
+os-prober                    # find other OSes found in bootable partitions
+p7zip                        # file archiving tool
+pacman-contrib               # contributed scripts and tools for pacman systems
+pacseek                      # tui tool for searching Arch package database
+papirus-icon-theme           # icon theme
+pinta                        # image editor
+pipewire                     # multimedia server tool for audio/video
+pipewire-alsa                # alsa replacement for pipewire
+pipewire-jack                # Jack and Jack2 replacement for pipewire
+pipewire-pulse               # PulseAudio server for pipewire
+pipewire-x11-bell            # emulates a bell sound for terminals
+pipewire-zeroconf            # low latency audio/video router and processor
+pkgfile                      # find files in Arch repositories
+popsicle                     # USB flash drive writer
+putty                        # terminal emulator
+python-mutagen               # python module to handle audio metadata
+python-pip                   # python package installer
+python-pipx                  # updated python package installer
+python-pycryptodomex         # python low level cryptographic primitives
+python-pynvim                # python client and plugin host for nvim
+python-secretstorage         # python tool for storing passwords and other secrets
+python-websockets            # python library for websocket servers and clients
+python-xattr                 # python wrapper for extended file system attributes
+rclone                       # synchronize files and folders to various services
+reflector                    # update ARCH mirror list
+remmina                      # windows RDP connection manager
+rsync                        # file synchronization tool
+rtmpdump                     # toolkit for RTMP streams
+sl                           # steam locomotive
+sshfs                        # ssh file system driver
+system-config-printer        # CUPS printer configuration tool and status applet
+terminator                   # terminal emulator
+terminus-font                # terminus font
+thunar                       # gui file manager
+thunar-archive-plugin        # thunar archive manager
+thunar-media-tags-plugin     # thunar media tag plugin
+thunar-shares-plugin         # thunar file share manager
+thunar-volman                # thunar volume manager
+tldr                         # too long; didn't read. cli man pages
+traceroute                   # network diagnostic tool
+trippy                       # network diagnostic tool
+ttf-ms-fonts                 # Microsoft Windows fonts 
+unrar                        # archive unpacking tool
+usbutils                     # USB tools to query connected USB devices
+vi                           # CLI editor
+visual-studio-code-bin       # Microsoft VS Code editor
+wavpack                      # audio compress tool
+whois                        # internet domain listings
+wireplumber                  # sound manager
+wmctrl                       # X-11 window management tool
+wpa_supplicant               # wifi supplicant for security
+xclip                        # CLI clipboard tool
+xdg-user-dirs                # manages well known user directories
+xdg-utils                    # desktop integration tools
+yay                          # arch linux aur helper
+yazi                         # terminal file manager
+yt-dlp                       # you-tube downloader
+ytfzf                        # you-tube fuzzy finder

@@ -45,6 +45,7 @@ step3pacs=(
   libva
   lightdm
   lightdm-gtk-greeter
+  lightdm-settings
   lightdm-slick-greeter
   nfs-utils
   obsidian-icon-theme

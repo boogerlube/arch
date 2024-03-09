@@ -123,6 +123,7 @@ python-xattr
 rclone
 reflector
 remmina
+ripgrep
 rsync
 rtmpdump
 sl
@@ -154,3 +155,4 @@ xdg-utils
 yay
 yt-dlp
 ytfzf
+zoxide

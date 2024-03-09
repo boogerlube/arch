@@ -127,6 +127,7 @@ sudo usermod -aG input $USER
 #yay -S waybar-hyprland-git
 yay -S archlinux-themes-sddm
 yay -S sway-audio-idle-inhibit-git
+yay -S hypridle
 
 #Setup theme for sddm
 echo '[Theme]' | sudo tee /etc/sddm.conf
