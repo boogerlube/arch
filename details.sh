@@ -15,6 +15,7 @@ mkdir ~/.local/bin
 mv scripts/* ~/.local/bin
 chmod +x ~/.local/bin/*.sh
 sudo cp ./sounds/* /usr/share/sounds/
+mkdir -p ~/.local/share/nemo/scripts
 ln -s ~/.local/bin/playlist.sh ~/.local/share/nemo/scripts/
 mkdir ~/.themes
 mv themes/* ~/.themes/
@@ -22,10 +23,11 @@ mv themes/* ~/.themes/
 mv desklets ~/.local/share/cinnamon/
 sudo cp repair.sh /boot
 
-#restore cinnamon settings
-dconf load / < dconf.conf
-#dconf load /org/cinnamon/sounds/ < sounds.txt
-#dconf load /org/cinnamon/desktop/keybinding/ < shortcut-settings.conf
+# restore cinnamon settings if cinnamon is installed
+if [ -e  /usr/bin/cinnamon ] ; then
+      dconf load / < dconf.conf
+fi
+
 
 #fix vscode bug with nemo
 xdg-mime default nemo.desktop inode/directory
