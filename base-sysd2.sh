@@ -201,6 +201,11 @@ arch-chroot "$rootmnt" pacman-key --populate archlinux
 sed -i '/^HOOKS=/ s/udev/systemd/' "$rootmnt"/etc/mkinitcpio.conf
 sed -i '/^HOOKS=/ s/keymap consolefont/sd-vconsole' "$rootmnt"/etc/mkinitcpio.conf
 sed -i '/^HOOKS=/ s/filesystems/sd-encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
+#sed -i \
+    -e 's/base udev/base systemd/g' \
+    -e 's/keymap consolefont/sd-vconsole sd-encrypt/g' \
+    "$rootmnt"/etc/mkinitcpio.conf
+
 
 # create initramfs
 arch-chroot "$rootmnt" mkinitcpio -P
@@ -269,5 +274,5 @@ mkdir "$rootmnt"/home/"$USERNAME"/arch
 cp * "$rootmnt"/home/"$USERNAME"/arch/
 chown -R 1000:1000 "$rootmnt"/home/"$USERNAME"/arch
 
-umount -R /mnt
+#umount -R /mnt
 echo -e "\n\nPlease reboot now\n"
