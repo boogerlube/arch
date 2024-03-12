@@ -229,7 +229,7 @@ else
 fi
 
 # Install systemd-boot and configure it for encryption
-bootctl --path="$rootmnt"/boot/efi install
+bootctl --path="$rootmnt"/boot install
 mkdir -p "$rootmnt"/boot/loader/entries
 UUID=$(blkid -s UUID -o value ${diskroot})
 echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
