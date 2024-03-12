@@ -200,7 +200,7 @@ arch-chroot "$rootmnt" pacman-key --populate archlinux
 # Add HOOKS for encryption and systemd boot
 sed -i '/^HOOKS=/ s/udev/systemd/' "$rootmnt"/etc/mkinitcpio.conf
 sed -i '/^HOOKS=/ s/keymap/sd-vconsole' "$rootmnt"/etc/mkinitcpio.conf
-sed -i '/^HOOKS=/ s/filesystems/sd-encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
+sed -i '/^HOOKS=/ s/filesystems/btrfs sd-encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
 sed -i '/^MODULES=/ s/()/(btrfs)' "$rootmnt"/etc/mkinitcpio.conf
 #sed -i \
     -e 's/base udev/base systemd/g' \
