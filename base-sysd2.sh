@@ -199,7 +199,7 @@ arch-chroot "$rootmnt" pacman-key --populate archlinux
 
 # Add HOOKS for encryption and systemd boot
 sed -i '/^HOOKS=/ s/udev/systemd/' "$rootmnt"/etc/mkinitcpio.conf
-sed -i '/^HOOKS=/ s/keymap consolefont/sd-vconsole' "$rootmnt"/etc/mkinitcpio.conf
+sed -i '/^HOOKS=/ s/keymap/sd-vconsole' "$rootmnt"/etc/mkinitcpio.conf
 sed -i '/^HOOKS=/ s/filesystems/sd-encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
 #sed -i \
     -e 's/base udev/base systemd/g' \
@@ -229,7 +229,7 @@ else
 fi
 
 # Install systemd-boot and configure it for encryption
-bootctl --path="$rootmnt"/boot install
+bootctl --path="$rootmnt"/boot/efi install
 mkdir -p "$rootmnt"/boot/loader/entries
 UUID=$(blkid -s UUID -o value ${diskroot})
 echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
