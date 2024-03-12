@@ -70,10 +70,6 @@ libdv
 libmad
 libmpeg2
 libreoffice-fresh
-lightdm
-lightdm-gtk-greeter
-lightdm-settings
-lightdm-slick-greeter
 linux
 linux-firmware
 linux-headers
@@ -93,7 +89,6 @@ networkmanager-openvpn
 nfs-utils
 nload
 nnn
-notepadqq
 obsidian-icon-theme
 okular
 os-prober
