@@ -40,7 +40,6 @@ hypr3pacs=(
   firefox
   ffmpeg
   ffmpegthumbnailer
-  flameshot-git
   grimblast-git
   hyprland
   hyprpaper
@@ -89,6 +88,7 @@ hypr3pacs=(
   ttf-nerd-fonts-symbols-common
   tumbler
   udiskie
+  ulauncher
   viewnior
   waybar
   wf-recorder
@@ -111,6 +111,7 @@ sudo systemctl enable fstrim.timer
 sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 sudo systemctl enable sddm
+sudo systemctl enable bluetooth
 
 # Add user to input group for waybar
 sudo usermod -aG input $USER

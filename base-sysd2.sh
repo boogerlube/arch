@@ -208,7 +208,7 @@ sed -i '/^HOOKS=/ s/filesystems/sd-encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
 
 
 # create initramfs
-arch-chroot "$rootmnt" mkinitcpio -P
+#arch-chroot "$rootmnt" mkinitcpio -P
 
 # Setup necessary tools
 arch-chroot "$rootmnt" pacman -Sy "${basepacs[@]}" --noconfirm --needed
