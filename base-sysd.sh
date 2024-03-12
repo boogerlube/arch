@@ -181,6 +181,7 @@ sed -i 's/#en_US.UTF-8/en_US.UTF-8/' "$rootmnt"/etc/locale.gen
 arch-chroot "$rootmnt" locale-gen
 echo "LANG=en_US.UTF-8" > "$rootmnt"/etc/locale.conf
 echo $HOST > "$rootmnt"/etc/hostname
+echo "KEYMAP=us" > "$rootmnt"/etc/vconsole.conf
 
 # setup hosts file
 cat > "$rootmnt"/etc/hosts <<EOF

@@ -21,7 +21,6 @@ cmus
 copyq
 cups
 cups-pdf
-czkawka-git
 deja-dup
 dhclient
 dialog
