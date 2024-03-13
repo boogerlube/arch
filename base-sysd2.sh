@@ -147,7 +147,7 @@ umount /mnt
 
 # mount subvolumes
 mount -o ${sv_opts},subvol=@ ${MAPPING} /mnt
-mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot/efi
+mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
 mount -m -o ${sv_opts},subvol=@home ${MAPPING} /mnt/home
 mount -m -o ${sv_opts},subvol=@log ${MAPPING} /mnt/var/log
 mount -m -o ${sv_opts},subvol=@snapshots ${MAPPING} /mnt/.snapshots
