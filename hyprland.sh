@@ -131,8 +131,8 @@ yay -S sway-audio-idle-inhibit-git
 yay -S hypridle
 
 #Setup theme for sddm
-echo '[Theme]' | sudo tee /etc/sddm.conf
-echo 'Current=archlinux-simplyblack' | sudo tee -a /etc/sddm.conf
+echo "[Theme]" | sudo tee /etc/sddm.conf
+echo "Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
 
 #start sound services
 systemctl --user start pipewire.service

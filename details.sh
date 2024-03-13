@@ -33,3 +33,7 @@ fi
 #fix vscode bug with nemo
 xdg-mime default nemo.desktop inode/directory
 
+#set theme
+gsettings set org.gnome.desktop.interface gtk-theme 'CBlack'
+
+

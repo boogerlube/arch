@@ -204,7 +204,7 @@ sed -i '/^HOOKS=/ s/filesystems/btrfs sd-encrypt &/g' "$rootmnt"/etc/mkinitcpio.
 sed -i '/^MODULES=/ s/()/(btrfs)/g' "$rootmnt"/etc/mkinitcpio.conf
 
 # create initramfs
-arch-chroot "$rootmnt" mkinitcpio -P
+#arch-chroot "$rootmnt" mkinitcpio -P
 
 # Setup necessary tools
 arch-chroot "$rootmnt" pacman -Sy "${basepacs[@]}" --noconfirm --needed
@@ -225,7 +225,7 @@ else
 fi
 
 # Install systemd-boot and configure it for encryption
-bootctl --path="$rootmnt"/boot install
+bootctl --path="$rootmnt"/boot/efi install
 mkdir -p "$rootmnt"/boot/loader/entries
 UUID=$(blkid -s UUID -o value ${diskroot})
 echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
