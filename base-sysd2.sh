@@ -115,6 +115,21 @@ USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 # choose hostname
 read -p 'Hostname? ' HOST
 
+# Add CPU microcode to system
+ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
+if [[ "$ucode" == *"Intel"* ]]; then
+  echo "Intel processor detected. Installing intel-ucode...."
+  ARCH="intel-ucode.img"
+  #arch-chroot "$rootmnt" pacman -S --noconfirm intel-ucode
+elif [[ "$ucode" == *"AMD"* ]]; then
+  echo "AMD processor detected. Installing amd-ucode...."
+  ARCH="amd-ucode.img"
+  #arch-chroot "$rootmnt" pacman -S --noconfirm amd-ucode
+else
+  echo "No Intel or AMD processor detected."
+  ARCH=""
+fi
+
 # Wipe and partition disks
 wipefs -af $disk
 sgdisk --zap-all --clear $disk
@@ -162,10 +177,10 @@ reflector --verbose -f 20 --protocol https --latest 15 --sort rate --country US 
 # Finally! Install the base system
 if $LTS ; then
    # Load LTS kernel
-   pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux-firmware util-linux nano dhclient
+   pacstrap -K /mnt base base-devel linux-lts linux-lts-headers linux-firmware util-linux nano dhclient $ARCH
 else
    # Load standard kernel
-   pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient  
+   pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient $ARCH
 fi
 
 # Create the fstab table and save it
@@ -208,21 +223,6 @@ sed -i '/^MODULES=/ s/()/(btrfs)/g' "$rootmnt"/etc/mkinitcpio.conf
 
 # Setup necessary tools
 arch-chroot "$rootmnt" pacman -Sy "${basepacs[@]}" --noconfirm --needed
-
-# Add CPU microcode to system
-ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
-if [[ "$ucode" == *"Intel"* ]]; then
-  echo "Intel processor detected. Installing intel-ucode...."
-  ARCH="intel-ucode.img"
-  arch-chroot "$rootmnt" pacman -S --noconfirm intel-ucode
-elif [[ "$ucode" == *"AMD"* ]]; then
-  echo "AMD processor detected. Installing amd-ucode...."
-  ARCH="amd-ucode.img"
-  arch-chroot "$rootmnt" pacman -S --noconfirm amd-ucode
-else
-  echo "No Intel or AMD processor detected."
-  ARCH=""
-fi
 
 # Install systemd-boot and configure it for encryption
 bootctl --path="$rootmnt"/boot/efi install
