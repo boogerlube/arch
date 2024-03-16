@@ -71,6 +71,8 @@ sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
+sudo systemctl enable bluetooth
+sudo systemctl enable systemd-boot-update
 
 # set lightdm-slick-greeter as default greeter
 sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf

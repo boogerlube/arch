@@ -112,6 +112,7 @@ sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 sudo systemctl enable sddm
 sudo systemctl enable bluetooth
+sudo systemctl enable systemd-boot-update
 
 # Add user to input group for waybar
 sudo usermod -aG input $USER

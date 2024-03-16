@@ -23,6 +23,7 @@ mv themes/* ~/.themes/
 #mkdir ~/.local/share/cinnamon/desklets
 mv desklets ~/.local/share/cinnamon/
 sudo cp repair.sh /boot
+sudo sed -i '/^#MAKEFLAGS=/ s/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc)"/g' /etc/makepkg.conf
 
 # restore cinnamon settings if cinnamon is installed
 if [ -e  /usr/bin/cinnamon ] ; then
