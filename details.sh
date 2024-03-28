@@ -6,7 +6,7 @@ tar -xvf post-install.tar.gz
 mv Wallpapers/ ~/Pictures/
 mv ./arch-shell/.* ~
 cat fstab.txt | sudo tee -a /etc/fstab
-sudo mkdir -p /media/{pinky,share,torrent}
+sudo mkdir -p /media/{brain,share,torrent}
 sudo mount -a
 source ~/.bashrc
 sudo mkdir /etc/samba
