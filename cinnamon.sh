@@ -34,6 +34,7 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 # Install Cinnamon DE base + audio + terminal
 
 step3pacs=(
+  avahi
   cinnamon
   cups
   fastfetch
@@ -73,6 +74,7 @@ sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 sudo systemctl enable bluetooth
 sudo systemctl enable systemd-boot-update
+sudo systemctl enable avahi-daemon
 
 # set lightdm-slick-greeter as default greeter
 sudo sed -i 's/#greeter-session=example-gtk-gnome/greeter-session=lightdm-slick-greeter/' /etc/lightdm/lightdm.conf

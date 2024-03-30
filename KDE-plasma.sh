@@ -34,6 +34,7 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 # Install KDE-plasma DE base + audio + terminal
 
 step3pacs=(
+  avahi
   cups
   dolphin
   fastfetch
@@ -66,6 +67,7 @@ sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable paccache.timer
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
+sudo systemctl enable avahi-daemon
 
 cd ~
 git clone https://aur.archlinux.org/yay.git

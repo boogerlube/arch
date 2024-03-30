@@ -34,6 +34,7 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 # Install MATE DE base + audio + terminal
 
 step3pacs=(
+  avahi
   caja
   cups
   fastfetch
@@ -69,6 +70,7 @@ sudo systemctl enable lightdm
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable paccache.timer
+sudo systemctl enable avahi-daemon
 sudo systemctl enable archlinux-keyring-wkd-sync.timer
 
 # set lightdm-slick-greeter as default greeter
