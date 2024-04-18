@@ -119,7 +119,7 @@ read -p 'Hostname? ' HOST
 wipefs -af $disk
 sgdisk --zap-all --clear $disk
 partprobe $disk
-sgdisk -n 0:0:+512MiB -t 0:ef00 -c 0:esp $disk
+sgdisk -n 0:0:+1024MiB -t 0:ef00 -c 0:esp $disk
 sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
 partprobe $disk
 mkfs.vfat -F32 -n ESP ${diskboot}

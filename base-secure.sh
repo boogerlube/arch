@@ -122,7 +122,7 @@ timedatectl set-ntp true
 wipefs -af $disk
 sgdisk --zap-all --clear $disk
 partprobe $disk
-sgdisk -n1:0:+512M -t1:ef00 -c1:EFI -N2 -t2:8304 -c2:LINUXROOT $disk
+sgdisk -n1:0:+1024M -t1:ef00 -c1:EFI -N2 -t2:8304 -c2:LINUXROOT $disk
 partprobe $disk
 mkfs.vfat -F32 -n EFI ${diskboot}
 
