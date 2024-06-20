@@ -40,6 +40,8 @@ step3pacs=(
   fastfetch
   firefox
   gvfs
+  kde-applications
+  krdp
   libva
   nfs-utils
   obsidian-icon-theme
@@ -54,9 +56,10 @@ step3pacs=(
   sddm
   terminator
   wireplumber
-  xorg
   zimg
   )
+
+# removed xorg from packages as KDE-Plasma now uses Wayland
 
 sudo pacman -S "${step3pacs[@]}" --needed --noconfirm
 
