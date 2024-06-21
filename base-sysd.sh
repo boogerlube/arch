@@ -74,6 +74,10 @@ timedatectl set-ntp true
 sleep 5
 hwclock --systohc
 
+# Use dhclient to populate /etc/resolv.conf because 
+# DNS is getting wiped out during install
+dhclient
+
 # setup partition vars
 disk="${disk,,}"
 if [[ $disk == *"nvme"* ]]; then
@@ -159,8 +163,6 @@ mount -m -o ${sv_opts},subvol=@tmp ${MAPPING} /mnt/var/tmp
 # Find the best mirrors for installation
 reflector --verbose -f 20 --protocol https --latest 15 --sort rate --country US --save /etc/pacman.d/mirrorlist
 
-read -p "Is this correct? (y/n) " yn
-
 # Finally! Install the base system
 if $LTS ; then
    # Load LTS kernel
@@ -169,9 +171,6 @@ else
    # Load standard kernel
    pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient  
 fi
-
-cat /etc/resolv.conf
-read -p "Is this correct? (y/n) " yn
 
 # Create the fstab table and save it
 genfstab -U /mnt >> "$rootmnt"/etc/fstab
@@ -202,22 +201,17 @@ rm -rf "$rootmnt"/etc/pacman.d/gnupg
 arch-chroot "$rootmnt" pacman-key --init
 arch-chroot "$rootmnt" pacman-key --populate archlinux
 
-cat /etc/resolv.conf
-read -p "Is this correct? (y/n) " yn
-
 # Add encryption to initramfs
 sed -i '/^HOOKS=/ s/filesystems/encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
 
 # create initramfs
 arch-chroot "$rootmnt" mkinitcpio -P
 
-cat /etc/resolv.conf
-read -p "Is this correct? (y/n) " yn
-
 # Setup necessary tools
 arch-chroot "$rootmnt" pacman -Sy "${basepacs[@]}" --noconfirm --needed
 
-read -p $'\nPress any key ' -rs PAUSE
+echo -e "\n\n"
+read -p $'\nPress [enter] ' -rs PAUSE
 
 # Add CPU microcode to system
 ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
@@ -233,8 +227,6 @@ else
   echo "No Intel or AMD processor detected."
   ARCH=""
 fi
-
-read -p "Is this correct? (y/n) " yn
 
 # Install systemd-boot and configure it for encryption
 bootctl --path="$rootmnt"/boot install
