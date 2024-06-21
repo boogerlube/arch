@@ -170,6 +170,7 @@ else
    pacstrap -K /mnt base base-devel linux linux-firmware linux-headers util-linux nano dhclient  
 fi
 
+cat /etc/resolv.conf
 read -p "Is this correct? (y/n) " yn
 
 # Create the fstab table and save it
@@ -201,6 +202,7 @@ rm -rf "$rootmnt"/etc/pacman.d/gnupg
 arch-chroot "$rootmnt" pacman-key --init
 arch-chroot "$rootmnt" pacman-key --populate archlinux
 
+cat /etc/resolv.conf
 read -p "Is this correct? (y/n) " yn
 
 # Add encryption to initramfs
@@ -208,6 +210,9 @@ sed -i '/^HOOKS=/ s/filesystems/encrypt &/g' "$rootmnt"/etc/mkinitcpio.conf
 
 # create initramfs
 arch-chroot "$rootmnt" mkinitcpio -P
+
+cat /etc/resolv.conf
+read -p "Is this correct? (y/n) " yn
 
 # Setup necessary tools
 arch-chroot "$rootmnt" pacman -Sy "${basepacs[@]}" --noconfirm --needed
