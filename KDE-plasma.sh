@@ -34,18 +34,31 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 # Install KDE-plasma DE base + audio + terminal
 
 step3pacs=(
+  ark
   avahi
   cups
   dolphin
   fastfetch
   firefox
+  ffmpegthumbs
+  flatpak-kcm
+  qwenview
   gvfs
-  kde-applications
+  kalk
+  kate
+  kclock
+  kcolorchooser
+  kdialog
+  kimageformats
+  konsole
   krdp
   libva
+  nemo
   nfs-utils
   obsidian-icon-theme
+  partitionmanager
   plasma
+  plasma-systemmonitor
   pipewire
   pipewire-alsa
   pipewire-jack
@@ -53,9 +66,13 @@ step3pacs=(
   pipewire-x11-bell
   pipewire-zeroconf
   pkgfile
+  qt6-imageformats
   sddm
+  spectable
   terminator
   wireplumber
+  xdg-desktop-portal-gtk
+  xwaylandvideobridge
   zimg
   )
 
@@ -78,6 +95,11 @@ git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
 cd yay
 makepkg -si --noconfirm
+
+# Load Arch theme for SDDM
+yay -S archlinux-themes-sddm
+echo "[Theme]" | sudo tee /etc/sddm.conf
+echo "Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
 
 # chaotic-aur website:
 #https://aur.chaotic.cx
