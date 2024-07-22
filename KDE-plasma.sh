@@ -30,6 +30,7 @@ sudo pacman -Sy
 sudo sed -i 's/#Color/Color/' /etc/pacman.conf
 sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
+sudo pacman -S plasma
 
 # Install KDE-plasma DE base + audio + terminal
 
@@ -42,7 +43,7 @@ step3pacs=(
   firefox
   ffmpegthumbs
   flatpak-kcm
-  qwenview
+  gwenview
   gvfs
   kalk
   kate
@@ -57,7 +58,6 @@ step3pacs=(
   nfs-utils
   obsidian-icon-theme
   partitionmanager
-  plasma
   plasma-systemmonitor
   pipewire
   pipewire-alsa
@@ -68,7 +68,7 @@ step3pacs=(
   pkgfile
   qt6-imageformats
   sddm
-  spectable
+  spectacle
   terminator
   wireplumber
   xdg-desktop-portal-gtk
