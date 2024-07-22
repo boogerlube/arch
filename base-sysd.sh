@@ -210,9 +210,6 @@ arch-chroot "$rootmnt" mkinitcpio -P
 # Setup necessary tools
 arch-chroot "$rootmnt" pacman -Sy "${basepacs[@]}" --noconfirm --needed
 
-echo -e "\n\n"
-read -p $'\nPress [enter] ' -rs PAUSE
-
 # Add CPU microcode to system
 ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
 if [[ "$ucode" == *"Intel"* ]]; then
