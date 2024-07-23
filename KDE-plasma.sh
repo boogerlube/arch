@@ -30,9 +30,13 @@ sudo pacman -Sy
 sudo sed -i 's/#Color/Color/' /etc/pacman.conf
 sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
-sudo pacman -S plasma
+#Install KDE-Plasma meta package here because of questions.
+#Install greeter here too because it is vital
 
-# Install KDE-plasma DE base + audio + terminal
+sudo pacman -S plasma --noconfirm --needed
+sudo pacman -S sddm --noconfirm
+
+# Install KDE packages + audio + terminal
 
 step3pacs=(
   ark
@@ -46,7 +50,6 @@ step3pacs=(
   gwenview
   gvfs
   kalk
-  kate
   kclock
   kcolorchooser
   kdialog
@@ -67,7 +70,6 @@ step3pacs=(
   pipewire-zeroconf
   pkgfile
   qt6-imageformats
-  sddm
   spectacle
   terminator
   wireplumber
