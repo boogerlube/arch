@@ -80,7 +80,7 @@ step3pacs=(
 
 # removed xorg from packages as KDE-Plasma now uses Wayland
 
-sudo pacman -S "${step3pacs[@]}" --needed --noconfirm
+sudo pacman -S "${step3pacs[@]}" --needed --noconfirm > $HOME/KDE.log
 
 # update databases and enable services
 sudo pkgfile --update

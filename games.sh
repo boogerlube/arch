@@ -4,6 +4,9 @@
 ###                                                                                  ###
 ########################################################################################
 
+# update package cache
+sudo pacman -Sy
+
 gamepacs=(
    alsa-lib 
    alsa-plugins 
