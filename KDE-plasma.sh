@@ -63,6 +63,7 @@ step3pacs=(
   partitionmanager
   plasma-systemmonitor
   pipewire
+  pipewire-alsa
   pipewire-pulse
   pipewire-x11-bell
   pipewire-zeroconf
