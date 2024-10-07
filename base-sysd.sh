@@ -46,6 +46,7 @@ basepacs=(
   dialog
   dosfstools
   efibootmgr
+  fwupd
   git
   inetutils
   iwd
@@ -259,6 +260,9 @@ echo "/dev/zram0     none    swap    sw,pri=100    0 0" >> "$rootmnt"/etc/fstab
 
 #  Add user
 arch-chroot "$rootmnt" useradd -m -p "$USERPASSWORD" "$USERNAME"
+
+# Change passwd for root
+arch-chroot "$rootmnt" passwd root "$USERPASSWORD"
 
 #  create USERNAME file in /etc/sudoers.d
 echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> "$rootmnt"/etc/sudoers.d/"$USERNAME"
