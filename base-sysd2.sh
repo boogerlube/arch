@@ -56,6 +56,8 @@ basepacs=(
   os-prober
   pacman-contrib
   reflector
+  systemd-ukify
+  terminator
   wpa_supplicant
   xdg-utils
   xdg-user-dirs
