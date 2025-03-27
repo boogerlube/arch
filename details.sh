@@ -1,5 +1,13 @@
-
 # Make yerself t'home!
+
+#check for internet
+ip a
+
+if : >/dev/tcp/8.8.8.8/53; then
+  echo 'Internet available.'
+else
+  echo 'Offline.';exit
+fi
 
 #sudo chown -R bob:bob ~/arch/
 tar -xvf post-install.tar.gz
@@ -15,6 +23,7 @@ sudo pacman -S --needed --noconfirm gvfs-smb
 mkdir -p ~/.local/bin
 mv scripts/* ~/.local/bin
 chmod +x ~/.local/bin/*.sh
+sudo mkdir -p /usr/share/sounds
 sudo cp ./sounds/* /usr/share/sounds/
 mkdir -p ~/.local/share/nemo/scripts
 ln -s ~/.local/bin/playlist.sh ~/.local/share/nemo/scripts/

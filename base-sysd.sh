@@ -40,6 +40,7 @@ cecho(){
 
 # List of packages to install
 basepacs=(
+  amd-ucode
   bash-completion
   btrfs-progs
   cryptsetup
@@ -49,6 +50,7 @@ basepacs=(
   fwupd
   git
   inetutils
+  intel-ucode
   iwd
   man-db
   mtools
@@ -218,11 +220,9 @@ ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
 if [[ "$ucode" == *"Intel"* ]]; then
   echo "Intel processor detected. Installing intel-ucode...."
   ARCH="intel-ucode.img"
-  arch-chroot "$rootmnt" pacman -S --noconfirm intel-ucode
 elif [[ "$ucode" == *"AMD"* ]]; then
   echo "AMD processor detected. Installing amd-ucode...."
   ARCH="amd-ucode.img"
-  arch-chroot "$rootmnt" pacman -S --noconfirm amd-ucode
 else
   echo "No Intel or AMD processor detected."
   ARCH=""
@@ -231,6 +231,7 @@ fi
 # Install systemd-boot and configure it for encryption
 bootctl --path="$rootmnt"/boot install
 mkdir -p "$rootmnt"/boot/loader/entries
+PARTUUID=$(blkid -s PARTUUID -o value ${diskroot})
 UUID=$(blkid -s UUID -o value ${diskroot})
 if $LTS ; then
    echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
@@ -251,7 +252,7 @@ fi
 if $ENCRYPT ; then
    echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" nomodeset>> "$rootmnt"/boot/loader/entries/arch.conf
 else
-   echo "root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" nomodeset>> "$rootmnt"/boot/loader/entries/arch.conf
+   echo "options root=UUID="$UUID" rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" nomodeset>> "$rootmnt"/boot/loader/entries/arch.conf
 fi   
 echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
 echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf

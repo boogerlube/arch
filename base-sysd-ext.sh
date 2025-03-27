@@ -142,7 +142,7 @@ if $ENCRYPT ; then
 fi
 
 # Make and mount filesystems
-mkfs.ext4 -L archlinux ${MAPPING}
+mkfs.ext4 -F -L archlinux ${MAPPING}
 mount ${MAPPING} /mnt
 mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
 
@@ -215,6 +215,7 @@ fi
 # Install systemd-boot and configure it for encryption
 bootctl --path="$rootmnt"/boot install
 mkdir -p "$rootmnt"/boot/loader/entries
+PARTUUID=$(blkid -s PARTUUID -o value ${diskroot})
 UUID=$(blkid -s UUID -o value ${diskroot})
 if $LTS ; then
    echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
@@ -235,7 +236,7 @@ fi
 if $ENCRYPT ; then
    echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rd.luks.options=discard rw zswap.enabled=0 nomodeset" >> "$rootmnt"/boot/loader/entries/arch.conf
 else
-   echo "options root="$UUID" rw zswap.enabled=0 nomodeset" >> "$rootmnt"/boot/loader/entries/arch.conf
+   echo "options root=UUID="$UUID" rw zswap.enabled=0 nomodeset" >> "$rootmnt"/boot/loader/entries/arch.conf
 fi   
 echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
 echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf
