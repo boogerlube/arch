@@ -1,0 +1,4 @@
+czkawka-git
+apple-music-bin
+joplin-desktop
+xpipe

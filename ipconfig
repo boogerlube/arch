@@ -1,0 +1,69 @@
+cecho(){
+  RED="\033[1;91m"
+  GREEN="\033[1;92m"  
+  YELLOW="\033[1;93m" 
+  CYAN="\033[1;96m"
+	BLUE="\\033[1;94m"
+  NC="\033[0m" # No Color
+
+  printf "${!1}${2} ${NC}\n"
+}
+
+interface=$(ip route | awk '/default/ {print $5}')
+INTF=($(echo $interface))
+if [[ ${#INTF[@]} -eq 0 ]] ; then
+  cecho "RED" "\n\nNO NETWORK DETECTED!\n\n"
+  exit 1
+fi
+
+#Check for more than 1 active NIC
+#INTF=($(echo $interface))
+if [[ ${#INTF[@]} -gt 1 ]]; then cecho "RED" "\n\nWARNING: more than 1 NIC active.\n"
+#We don't deal with that shit... yet
+interface=${INTF[0]}
+fi
+
+#Get network values
+gateway=$(ip route | awk 'NR==1 {print $3}')
+ip_and_cidr=$(ip -o -f inet addr show $interface | awk '{print $4}')
+ip_range=$(echo $ip_and_cidr | sed 's/\.[0-9]*\//.0\//')
+MAC=$(ip a s $interface | awk '/ether/ {print $2}')
+nameserver=$(cat /etc/resolv.conf | awk '$1 == "nameserver" {print $2}')
+
+#Check for active wireless NIC
+if [ -e /sys/class/net/$interface/wireless ] ; 
+  then wifi=true
+  else speed=$(cat /sys/class/net/$interface/speed)
+       duplex=$(cat /sys/class/net/$interface/duplex)
+       wifi=false
+fi       
+
+#Spit it out...
+echo -ne "\n"
+echo -ne "Host name is: "$(hostname -f)".\n"
+echo -ne "Network interface "$interface "is connected "
+if $wifi ; 
+  then echo -ne "on WiFi, SSID: "
+  ssid=$(nmcli connection show --active | awk '/wifi/ {print $1}')
+  
+  #Check to see if NM has added "Auto" in place one for automatically connected wifi.
+  
+  if [ "$ssid" == "Auto" ] ;
+     then ssid=$(nmcli connection show --active | awk '/wifi/ {print $2}')
+  fi
+  echo -ne $ssid
+  link=$(cat /proc/net/wireless | awk 'NR==3 {print $3}' | cut -c1-2)
+  echo -ne " @" $link"%.\n"
+  else echo -ne "at "$speed"mbps/"$duplex."\n"
+fi
+echo -ne "Interface $interface's MAC address is: "$MAC".\n"
+echo -ne "IP address is: "$ip_and_cidr".\n"
+echo -ne "Default gateway is: "$gateway".\n"
+echo -ne "Network is: "$ip_range".\n"
+echo -ne "Nameservers: "$nameserver".\n"
+if : >/dev/tcp/8.8.8.8/53; then
+  echo -ne "Public IP is: "$(curl -s ipinfo.io/ip)".\n\n"
+else
+  echo -ne "No Internet connection detected.\n\n"
+fi
+
