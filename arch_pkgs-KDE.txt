@@ -59,7 +59,6 @@ libdca
 libdv
 libmad
 libmpeg2
-libreoffice-fresh
 linux
 linux-firmware
 linux-headers
@@ -81,6 +80,7 @@ nload
 nnn
 obsidian-icon-theme
 okular
+onlyoffice-bin
 os-prober
 p7zip
 pacman-contrib

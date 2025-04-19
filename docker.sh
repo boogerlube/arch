@@ -6,5 +6,5 @@ fi
 
 pacman -S docker docker-compose
 systemctl enable --now docker.service
-usermod -aG docker $USER
+usermod -aG docker "$USER"
 newgrp docker
