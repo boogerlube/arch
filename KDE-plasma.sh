@@ -100,7 +100,7 @@ makepkg -si --noconfirm
 # Load Arch theme for SDDM
 yay -S archlinux-themes-sddm
 echo "[Theme]" | sudo tee /etc/sddm.conf
-echo "Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
+echo "#Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
 
 # chaotic-aur website:
 #https://aur.chaotic.cx
