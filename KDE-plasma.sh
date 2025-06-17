@@ -68,7 +68,9 @@ step3pacs=(
   pipewire-x11-bell
   pipewire-zeroconf
   pkgfile
+  qt5-declarative
   qt6-imageformats
+  sddm-kcm
   spectacle
   terminator
   wireplumber
