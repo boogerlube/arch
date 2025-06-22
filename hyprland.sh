@@ -102,7 +102,7 @@ hypr3pacs=(
   zimg
   )
 
-sudo pacman -S --needed --noconfirm "${hypr3pacs[@]}"
+sudo pacman -S --needed --noconfirm "${hypr3pacs[@]}" 2>&1 | tee $HOME/hyprland.log
 
 #update databases and enable services
 sudo pkgfile --update

@@ -67,7 +67,7 @@ step3pacs=(
   zimg
   )
 
-sudo pacman -S "${step3pacs[@]}" --needed --noconfirm
+sudo pacman -S "${step3pacs[@]}" --needed --noconfirm 2>&1 | tee $HOME/budgie.log
 
 # update databases and enable services
 sudo pkgfile --update

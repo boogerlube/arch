@@ -75,7 +75,6 @@ step3pacs=(
   terminator
   wireplumber
   xdg-desktop-portal-gtk
-  xwaylandvideobridge
   zimg
   )
 
@@ -100,7 +99,7 @@ cd yay
 makepkg -si --noconfirm
 
 # Load Arch theme for SDDM
-yay -S archlinux-themes-sddm
+yay -S archlinux-themes-sddm xwaylandvideobridge
 echo "[Theme]" | sudo tee /etc/sddm.conf
 echo "#Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
 
