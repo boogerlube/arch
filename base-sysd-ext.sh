@@ -234,9 +234,9 @@ fi
 
 # disable zswap
 if $ENCRYPT ; then
-   echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rd.luks.options=discard rw zswap.enabled=0 nomodeset" >> "$rootmnt"/boot/loader/entries/arch.conf
+   echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
 else
-   echo "options root=UUID="$UUID" rw zswap.enabled=0 nomodeset" >> "$rootmnt"/boot/loader/entries/arch.conf
+   echo "options root=UUID="$UUID" rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
 fi   
 echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
 echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf
