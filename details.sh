@@ -19,7 +19,7 @@ sudo mount -a
 source ~/.bashrc
 sudo mkdir /etc/samba
 sudo cp smb.conf /etc/samba/
-sudo pacman -S --needed --noconfirm gvfs-smb
+sudo pacman -S --needed --noconfirm gvfs-smb gvfs-dnssd gvfs-wsdd gvfs-nfs
 mkdir -p ~/.local/bin
 mv scripts/* ~/.local/bin
 chmod +x ~/.local/bin/*.sh

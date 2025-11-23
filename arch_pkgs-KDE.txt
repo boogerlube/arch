@@ -1,6 +1,5 @@
 a52dec
 arandr
-arc-gtk-theme
 aria2
 atomicparsley
 audacious
