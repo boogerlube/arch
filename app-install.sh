@@ -5,7 +5,7 @@ else
 fi
 
 #install all necessary packages.
-sudo pacman -S --needed --noconfirm - < arch_pkgs.txt
+sudo pacman -S --needed --noconfirm - < arch_pkg-KDE.txt
 
 #fix vscode bug with nemo
 xdg-mime default nemo.desktop inode/directory

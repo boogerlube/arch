@@ -34,6 +34,7 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 #Install greeter here too because it is vital
 
 sudo pacman -S plasma --noconfirm --needed
+sudo pacman -S plasma-login-manager --noconfirm --needed
 
 # Install KDE packages + audio + terminal
 
@@ -65,7 +66,6 @@ step3pacs=(
   nfs-utils
   obsidian-icon-theme
   partitionmanager
-  plasma-login-manager
   plasma-systemmonitor
   pipewire
   pipewire-alsa
