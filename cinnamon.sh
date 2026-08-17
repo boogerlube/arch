@@ -37,10 +37,15 @@ step3pacs=(
   avahi
   cinnamon
   cups
+  exfat
   fastfetch
   firefox
   flameshot
   gvfs
+  gvfs-dnssd
+  gvfs-nfs
+  gvfs-smb
+  gvfs-wsdd
   gnome-keyring
   libsecret
   libva

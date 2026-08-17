@@ -34,7 +34,6 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 #Install greeter here too because it is vital
 
 sudo pacman -S plasma --noconfirm --needed
-sudo pacman -S sddm --noconfirm
 
 # Install KDE packages + audio + terminal
 
@@ -43,12 +42,17 @@ step3pacs=(
   avahi
   cups
   dolphin
+  exfat-utils
   fastfetch
   firefox
   ffmpegthumbs
   flatpak-kcm
   gwenview
   gvfs
+  gvfs-dnssd
+  gvfs-nfs
+  gvfs-smb
+  gvfs-wsdd
   kalk
   kclock
   kcolorchooser
@@ -61,6 +65,7 @@ step3pacs=(
   nfs-utils
   obsidian-icon-theme
   partitionmanager
+  plasma-login-manager
   plasma-systemmonitor
   pipewire
   pipewire-alsa
@@ -70,7 +75,6 @@ step3pacs=(
   pkgfile
   qt5-declarative
   qt6-imageformats
-  sddm-kcm
   spectacle
   terminator
   wireplumber
@@ -84,7 +88,7 @@ sudo pacman -S "${step3pacs[@]}" --needed --noconfirm 2>&1 | tee $HOME/KDE.log
 
 # update databases and enable services
 sudo pkgfile --update
-sudo systemctl enable sddm
+sudo systemctl enable plasmalogin.service
 sudo systemctl enable cups.service
 sudo systemctl enable fstrim.timer
 sudo systemctl enable paccache.timer
@@ -99,9 +103,9 @@ cd yay
 makepkg -si --noconfirm
 
 # Load Arch theme for SDDM
-yay -S archlinux-themes-sddm xwaylandvideobridge
-echo "[Theme]" | sudo tee /etc/sddm.conf
-echo "#Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
+#yay -S archlinux-themes-sddm xwaylandvideobridge
+#echo "[Theme]" | sudo tee /etc/sddm.conf
+#echo "#Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
 
 # chaotic-aur website:
 #https://aur.chaotic.cx
