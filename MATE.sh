@@ -1,4 +1,4 @@
-if [ $(id -u) = 0 ]; 
+if [ $(id -u) = 0 ] ; 
 then
    echo "Do NOT run as root" 
    exit
@@ -33,9 +33,52 @@ sudo sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 5/' /etc/pacman.conf
 
 # Install MATE DE base + audio + terminal
 
-step3pacs=(
-  avahi
+matepacs=(
   caja
+  marco
+  mate-backgrounds
+  mate-control-center
+  mate-desktop
+  mate-icon-theme
+  mate-menus
+  mate-notification-daemon
+  mate-panel
+  mate-polkit
+  mate-session-manager
+  mate-settings-daemon
+  mate-themes
+  mate-user-guide
+  )
+  
+mateextrapacs=(
+  atril
+  caja-actions
+  caja-audio-video-properties 	
+  caja-image-converter
+  caja-open-terminal
+  caja-sendto	
+  caja-share
+  caja-wallpaper 	
+  caja-xattr-tags
+  engrampa
+  eom
+  mate-applets	
+  mate-calc
+  mate-icon-theme-faenza
+  mate-media
+  mate-netbook 	
+  mate-power-manager
+  mate-screensaver
+  mate-sensors-applet 	
+  mate-system-monitor
+  mate-terminal 	
+  mate-user-share
+  mate-utils
+  mozo
+  pluma
+)  
+
+step3pacs=(
   cups
   fastfetch
   firefox
@@ -44,25 +87,18 @@ step3pacs=(
   libva
   lightdm-gtk-greeter-settings
   lightdm-slick-greeter
-  mate
-  mate-extra
   nfs-utils
   obsidian-icon-theme
   pipewire
-  pipewire-alsa
-  pipewire-jack
-  pipewire-pulse
-  pipewire-x11-bell
-  pipewire-zeroconf
   pkgfile
-  terminator
   ttf-freefont
   wireplumber
-  xorg
   zimg
   )
 
-sudo pacman -S "${step3pacs[@]}" --needed --noconfirm 2>&1 | tee $HOME/mate.log
+sudo pacman -S "${matepacs[@]}" --needed --noconfirm 2>&1 | tee mate1.log
+sudo pacman -S "${mateextrapacs[@]}" --needed --noconfirm 2>&1 | tee mate2.log
+sudo pacman -S "${step3pacs[@]}" --needed --noconfirm 2>&1 | tee $HOME/mate3.log
 
 # update databases and enable services
 sudo pkgfile --update
@@ -89,3 +125,14 @@ makepkg -si --noconfirm
 
 # chaotic-aur website:
 #https://aur.chaotic.cx
+
+## removed pkgs
+# avahi
+# caja 
+# pipewire-alsa
+# pipewire-jack
+# pipewire-pulse
+# pipewire-x11-bell
+# pipewire-zeroconf
+# terminator
+# xorg
