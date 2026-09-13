@@ -97,15 +97,9 @@ sudo systemctl enable avahi-daemon
 
 cd ~
 git clone https://aur.archlinux.org/yay.git
-git clone https://github.com/AdnanHodzic/auto-cpufreq.git
 
 cd yay
 makepkg -si --noconfirm
-
-# Load Arch theme for SDDM
-#yay -S archlinux-themes-sddm xwaylandvideobridge
-#echo "[Theme]" | sudo tee /etc/sddm.conf
-#echo "#Current=archlinux-simplyblack" | sudo tee -a /etc/sddm.conf
 
 # chaotic-aur website:
 #https://aur.chaotic.cx

@@ -11,7 +11,7 @@
 ######
 
 disk="/dev/nvme0n1"
-ENCRYPT=true
+ENCRYPT=false
 LTS=false
 rootmnt="/mnt"
 USERNAME="bob"
