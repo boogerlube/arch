@@ -1,16 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+IFS=$'\n\t'
+COLOR=GREEN
+
 cecho(){
   RED="\033[1;91m"
   GREEN="\033[1;92m"  
   YELLOW="\033[1;93m" 
   CYAN="\033[1;96m"
-	BLUE="\\033[1;94m"
+  BLUE="\\033[1;94m"
   NC="\033[0m" # No Color
 
-  printf "${!1}${2} ${NC}\n"
+  #printf "${!1}${2} ${NC}\n"
+  printf "${!1}${2} ${NC}"
 }
 
 interface=$(ip route | awk '/default/ {print $5}')
-INTF=($(echo $interface))
+INTF=($(echo "$interface"))
 if [[ ${#INTF[@]} -eq 0 ]] ; then
   cecho "RED" "\n\nNO NETWORK DETECTED!\n\n"
   exit 1
@@ -25,23 +32,25 @@ fi
 
 #Get network values
 gateway=$(ip route | awk 'NR==1 {print $3}')
-ip_and_cidr=$(ip -o -f inet addr show $interface | awk '{print $4}')
-ip_range=$(echo $ip_and_cidr | sed 's/\.[0-9]*\//.0\//')
-MAC=$(ip a s $interface | awk '/ether/ {print $2}')
+ip_and_cidr=$(ip -o -f inet addr show "$interface" | awk '{print $4}')
+ip_range=$(echo "$ip_and_cidr" | sed 's/\.[0-9]*\//.0\//')
+MAC=$(ip a s "$interface" | awk '/ether/ {print $2}')
 nameserver=$(cat /etc/resolv.conf | awk '$1 == "nameserver" {print $2}')
+dhcp=$(nmcli -f DHCP4.OPTION device show | grep -i server | head -n1 | awk -F"= " '{print $2}')
 
-#Check for active wireless NIC
-if [ -e /sys/class/net/$interface/wireless ] ; 
+#Check for wireless NIC active
+if [ -e /sys/class/net/"$interface"/wireless ] ; 
   then wifi=true
-  else speed=$(cat /sys/class/net/$interface/speed)
-       duplex=$(cat /sys/class/net/$interface/duplex)
+  else speed=$(cat /sys/class/net/"$interface"/speed)
+       duplex=$(cat /sys/class/net/"$interface"/duplex)
        wifi=false
 fi       
 
 #Spit it out...
 echo -ne "\n"
-echo -ne "Host name is: "$(hostname -f)".\n"
-echo -ne "Network interface "$interface "is connected "
+cecho $COLOR "Host name is:"
+echo $(hostname -f)"."
+cecho $COLOR "Network interface $interface is connected"
 if $wifi ; 
   then echo -ne "on WiFi, SSID: "
   ssid=$(nmcli connection show --active | awk '/wifi/ {print $1}')
@@ -54,16 +63,24 @@ if $wifi ;
   echo -ne $ssid
   link=$(cat /proc/net/wireless | awk 'NR==3 {print $3}' | cut -c1-2)
   echo -ne " @" $link"%.\n"
-  else echo -ne "at "$speed"mbps/"$duplex."\n"
+  else echo -ne "at $speed mbps/$duplex.\n"
 fi
-echo -ne "Interface $interface's MAC address is: "$MAC".\n"
-echo -ne "IP address is: "$ip_and_cidr".\n"
-echo -ne "Default gateway is: "$gateway".\n"
-echo -ne "Network is: "$ip_range".\n"
-echo -ne "Nameservers: "$nameserver".\n"
-if : >/dev/tcp/8.8.8.8/53; then
-  echo -ne "Public IP is: "$(curl -s ipinfo.io/ip)".\n\n"
-else
-  echo -ne "No Internet connection detected.\n\n"
-fi
+cecho $COLOR "Interface $interface's MAC address is:"
+echo -ne $MAC".\n"
+cecho $COLOR "IP address is:"
+echo -ne $ip_and_cidr".\n"
+cecho $COLOR "Default gateway is:"
+echo -ne $gateway".\n"
+cecho $COLOR "Network is:"
+echo -ne $ip_range".\n"
+cecho $COLOR "DHCP server is:"
+echo -ne $dhcp".\n"
+cecho $COLOR "Nameservers:"
+echo -ne $nameserver".\n"
 
+if ping -q -c 1 -W 1 8.8.8.8 >/dev/null ; then
+  cecho $COLOR "Public IP is:"
+  echo -ne $(curl -s ipinfo.io/ip)".\n\n"
+else
+  cecho RED "No Internet connection detected.\n\n"
+fi
