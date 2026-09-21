@@ -58,6 +58,7 @@ basepacs=(
   network-manager-applet
   os-prober
   pacman-contrib
+  refind
   reflector
   systemd-ukify
   terminator
@@ -144,7 +145,7 @@ fi
 # Make and mount filesystems
 mkfs.ext4 -F -L archlinux ${MAPPING}
 mount ${MAPPING} /mnt
-mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
+mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/efi
 
 
 # Find the best mirrors for installation
@@ -217,6 +218,35 @@ export UUID=$(blkid -s UUID -o value ${diskroot})
 export PARTBOOT=$(blkid -s PARTUUID -o value ${diskboot})
 export UUIDBoot=$(blkid -s UUID -o value ${diskboot})
 
+refind-install --usedefault ${diskboot} --alldrivers
+
+cat > "$rootmnt"/efi/EFI/BOOT/refind.conf <<EOF
+timeout 20
+use_nvram false
+showtools install, shell, bootorder, gdisk, memtest, mok_tool, about, hidden_tags, reboot, exit, firmware, fwupdate
+extra_kernel_version_strings "linux-hardened,linux-rt-lts,linux-zen,linux-lts,linux-rt,linux"
+menuentry "Arch Linux" {
+    icon     /EFI/refind/icons/os_arch.png
+    volume   "Arch Linux"
+    loader   /boot/vmlinuz-linux
+    initrd   /boot/initramfs-linux.img
+    options  "root=PARTUUID=$PARTBOOT rw add_efi_memmap"
+    submenuentry "Boot using fallback initramfs" {
+        initrd /boot/initramfs-linux-fallback.img
+    }
+    submenuentry "Boot to terminal" {
+        add_options "systemd.unit=multi-user.target"
+    }
+    disabled
+}
+EOF
+
+#  Setup zram
+echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf
+echo "options zram num_devices=1" > "$rootmnt"/etc/modprobe.d/zram.conf
+echo 'KERNEL=="zram0",ATTR{comp_algorithm}="zstd", ATTR{disksize}="4G" RUN="/usr/bin/mkswap -U clear /dev/zram0", TAG+="systemd"' > "$rootmnt"/etc/udev/rules.d/99-zram.rules
+echo "/dev/zram0     none    swap    sw,pri=100    0 0" >> "$rootmnt"/etc/fstab
+
 #  Add user
 arch-chroot "$rootmnt" useradd -m -p "$USERPASSWORD" "$USERNAME"
 
@@ -224,7 +254,7 @@ arch-chroot "$rootmnt" useradd -m -p "$USERPASSWORD" "$USERNAME"
 echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> "$rootmnt"/etc/sudoers.d/"$USERNAME"
 
 # Setup services
-systemctl --root $rootmnt enable systemd-timesyncd NetworkManager
+systemctl --root $rootmnt enable systemd-timesyncd NetworkManager sshd
 systemctl --root $rootmnt mask systemd-networkd
 
 #  copy last step to user directory 'cause we gotta reboot!
