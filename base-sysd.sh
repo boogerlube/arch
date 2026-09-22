@@ -254,17 +254,12 @@ if $ENCRYPT ; then
 else
    echo "options root=UUID="$UUID" rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
 fi   
+
+
 echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
 echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf
 echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf
 echo "editor   yes" >> "$rootmnt"/boot/loader/loader.conf
-
-#  Setup swap file
-#chattr +C "$rootmnt"/swap
-#read -p 'Swap size in GB? ' MEM
-#MEMSIZE="$MEM""G"
-#btrfs filesystem mkswapfile --size $MEMSIZE "$rootmnt"/swap/swapfile
-#echo "/swap/swapfile none swap defaults 0 0" | tee -a "$rootmnt"/etc/fstab
 
 #  Setup zram
 echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf

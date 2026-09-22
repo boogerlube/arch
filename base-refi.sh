@@ -16,8 +16,6 @@ LTS=false
 rootmnt="/mnt"
 USERNAME="bob"
 DOMAIN="languy.com"
-# false = EXT4, true = btrfs
-FILESYSTEM=false
 sv_opts="rw,noatime,commit=120,compress-force=zstd:1,space_cache=v2"
 LTCYAN="\\033[1;96m"
 NC="\\033[0m" # no color
@@ -38,70 +36,6 @@ cecho(){
   NC="\033[0m" # No Color
 
   printf "${!1}${2} ${NC}\n"
-}
-
-ext4fs(){
-# Wipe and partition disks
-wipefs -af $disk
-sgdisk --zap-all --clear $disk
-partprobe $disk
-sgdisk -n 0:0:+1800MiB -t 0:ef00 -c 0:esp $disk
-sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
-partprobe $disk
-mkfs.vfat -F32 -n ESP ${diskboot}
-MAPPING=${diskroot}
-
-if $ENCRYPT ; then
-   # Setup encryption
-   echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
-   echo -n $LUKSPASS | cryptsetup open ${diskroot} root
-   MAPPING="/dev/mapper/root"
-fi
-
-# Make and mount filesystems
-mkfs.ext4 -F -L archlinux ${MAPPING}
-mount ${MAPPING} /mnt
-mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot}
-}
-
-btrfs(){
-# Wipe and partition disks
-
-wipefs -af $disk
-sgdisk --zap-all --clear $disk
-partprobe $disk
-sgdisk -n 0:0:+1900MiB -t 0:ef00 -c 0:esp $disk
-if $ENCRYPT ; then
-    sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
-else
-    sgdisk -n 0:0:0 -t 0:8304 -c 0:arch $disk
-fi    
-partprobe $disk
-mkfs.vfat -F32 -n ESP ${diskboot}
-MAPPING=${diskroot}
-
-if $ENCRYPT ; then
-   # Setup encryption
-   echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
-   echo -n $LUKSPASS | cryptsetup open ${diskroot} root
-   MAPPING="/dev/mapper/root"
-fi
-
-# Make and mount filesystems setup btrfs subvolumes
-mkfs.btrfs -f -L archlinux ${MAPPING}
-mount ${MAPPING} /mnt
-btrfs su cr /mnt/@
-btrfs su cr /mnt/@home
-btrfs su cr /mnt/@snapshots
-btrfs su cr /mnt/@log
-umount /mnt
-
-# mount subvolumes
-mount -o ${sv_opts},subvol=@ ${MAPPING} /mnt
-mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
-mount -m -o ${sv_opts},subvol=@home ${MAPPING} /mnt/home
-mount -m -o ${sv_opts},subvol=@log ${MAPPING} /mnt/var/log
-mount -m -o ${sv_opts},subvol=@snapshots ${MAPPING} /mnt/.snapshots
 }
 
 # List of packages to install
@@ -190,12 +124,46 @@ USERPASSWORD=$(mkpasswd -m sha-512 "$PASSWORD")
 # choose hostname
 read -p 'Hostname? ' HOST
 
-# partition and format the disk
-if $FILESYSTEM ; then
-    btrfs
-else
-    ext4fs
+# Wipe and partition disks
+wipefs -af $disk
+sgdisk --zap-all --clear $disk
+partprobe $disk
+sgdisk -n 0:0:+1000MiB -t 0:ef00 -c 0:esp $disk
+sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
+partprobe $disk
+mkfs.vfat -F32 -n ESP ${diskboot}
+MAPPING=${diskroot}
+
+if $ENCRYPT ; then
+   # Setup encryption
+   echo -n $LUKSPASS | cryptsetup luksFormat --type luks2 ${diskroot}
+   echo -n $LUKSPASS | cryptsetup open ${diskroot} root
+   MAPPING="/dev/mapper/root"
 fi
+
+# Make and mount filesystems setup btrfs subvolumes
+mkfs.btrfs -f -L archlinux ${MAPPING}
+mount ${MAPPING} /mnt
+btrfs su cr /mnt/@
+btrfs su cr /mnt/@home
+btrfs su cr /mnt/@snapshots
+btrfs su cr /mnt/@log
+btrfs su cr /mnt/@swap
+btrfs su cr /mnt/@cache
+btrfs su cr /mnt/@libvirt
+btrfs su cr /mnt/@tmp
+umount /mnt
+
+# mount subvolumes
+mount -o ${sv_opts},subvol=@ ${MAPPING} /mnt
+mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/efi
+mount -m -o ${sv_opts},subvol=@home ${MAPPING} /mnt/home
+mount -m -o ${sv_opts},subvol=@log ${MAPPING} /mnt/var/log
+mount -m -o ${sv_opts},subvol=@snapshots ${MAPPING} /mnt/.snapshots
+mount -m -o ${sv_opts},subvol=@swap ${MAPPING} /mnt/swap
+mount -m -o ${sv_opts},subvol=@cache ${MAPPING} /mnt/var/cache
+mount -m -o ${sv_opts},subvol=@libvirt ${MAPPING} /mnt/var/lib/libvirt
+mount -m -o ${sv_opts},subvol=@tmp ${MAPPING} /mnt/var/tmp
 
 # Find the best mirrors for installation
 reflector --verbose -f 20 --protocol https --latest 15 --sort rate --country US --save /etc/pacman.d/mirrorlist
@@ -252,44 +220,54 @@ ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
 if [[ "$ucode" == *"Intel"* ]]; then
   echo "Intel processor detected. Installing intel-ucode...."
   ARCH="intel-ucode.img"
-  # arch-chroot "$rootmnt" pacman -S --noconfirm intel-ucode
 elif [[ "$ucode" == *"AMD"* ]]; then
   echo "AMD processor detected. Installing amd-ucode...."
   ARCH="amd-ucode.img"
-  # arch-chroot "$rootmnt" pacman -S --noconfirm amd-ucode
 else
   echo "No Intel or AMD processor detected."
   ARCH=""
 fi
 
-# Install systemd-boot and configure it for encryption
-bootctl --path="$rootmnt"/boot install
-mkdir -p "$rootmnt"/boot/loader/entries
-PARTUUID=$(blkid -s PARTUUID -o value ${diskroot})
-UUID=$(blkid -s UUID -o value ${diskroot})
-if $LTS ; then
-   echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
-   echo "linux /vmlinuz-linux-lts" >> "$rootmnt"/boot/loader/entries/arch.conf
-   echo "initrd /"$ARCH >> "$rootmnt"/boot/loader/entries/arch.conf
-   echo "initrd /initramfs-linux-lts.img" >> "$rootmnt"/boot/loader/entries/arch.conf
-else  
-   echo "title Arch Linux" > "$rootmnt"/boot/loader/entries/arch.conf
-   echo "linux /vmlinuz-linux" >> "$rootmnt"/boot/loader/entries/arch.conf
-   echo "initrd /"$ARCH >> "$rootmnt"/boot/loader/entries/arch.conf
-   echo "initrd /initramfs-linux.img" >> "$rootmnt"/boot/loader/entries/arch.conf
-fi
+export PARTUUID=$(blkid -s PARTUUID -o value ${diskroot})
+export UUID=$(blkid -s UUID -o value ${diskroot})
+export PARTBOOT=$(blkid -s PARTUUID -o value ${diskboot})
+export UUIDBoot=$(blkid -s UUID -o value ${diskboot})
+
+refind-install --usedefault ${diskboot} --alldrivers
+
+cat > "$rootmnt"/efi/EFI/BOOT/refind.conf <<EOF
+timeout 5
+use_nvram false
+showtools install, shell, bootorder, gdisk, memtest, mok_tool, about, hidden_tags, reboot, exit, firmware, fwupdate
+extra_kernel_version_strings "linux-hardened,linux-rt-lts,linux-zen,linux-lts,linux-rt,linux"
+menuentry "Arch Linux" {
+    icon     /EFI/refind/icons/os_arch.png
+    volume   "Arch Linux"
+    loader   /root/boot/vmlinuz-linux
+    initrd   /root/boot/initramfs-linux.img
+    options  "root=PARTUUID=$PARTBOOT rw rootflags=subvol=root add_efi_memmap"
+    submenuentry "Boot using fallback initramfs" {
+        initrd /boot/initramfs-linux-fallback.img
+    }
+    submenuentry "Boot to terminal" {
+        add_options "systemd.unit=multi-user.target"
+    }
+    disabled
+}
+EOF
+
+cat > "$rootmnt"/boot/refind_linux.conf <<EOF
+"Boot with standard options"  "root=UUID=$UUID rw zswap.enabled=0"
+"Boot to single-user mode"    "root=UUID=$UUID rw zswap.enabled=0 single"
+"Boot with minimal options"   "root=UUID=$UUID rw zswap.enabled=0"
+EOF
 
 # disable zswap
-if $ENCRYPT ; then
-   #echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
-   echo "options rd.luks.name="$UUID"=root root=${MAPPING} rd.luks.options=password-echo=no discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
-else
-   echo "options root=UUID="$UUID" rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
-fi   
-echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
-echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf
-echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf
-echo "editor   yes" >> "$rootmnt"/boot/loader/loader.conf
+#if $ENCRYPT ; then
+#   echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
+#else
+#   echo "options root=UUID="$UUID" rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
+#fi   
 
 #  Setup zram
 echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf

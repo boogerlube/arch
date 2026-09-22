@@ -19,7 +19,7 @@ sudo mount -a
 source ~/.bashrc
 sudo mkdir /etc/samba
 sudo cp smb.conf /etc/samba/
-sudo pacman -S --needed --noconfirm gvfs-smb gvfs-dnssd gvfs-wsdd gvfs-nfs
+sudo pacman -S --needed --noconfirm gvfs-smb gvfs-dnssd gvfs-wsdd gvfs-nfs fastfetch eza
 mkdir -p ~/.local/bin
 mv scripts/* ~/.local/bin
 chmod +x ~/.local/bin/*.sh
@@ -27,5 +27,6 @@ mkdir -p ~/.local/share/nemo/scripts
 ln -s ~/.local/bin/playlist.sh ~/.local/share/nemo/scripts/
 sudo cp repair.sh /boot
 sudo sed -i '/^#MAKEFLAGS=/ s/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$(nproc)"/g' /etc/makepkg.conf
+sudo cp refind.hook /etc/pacman.d/hooks/
 
 
