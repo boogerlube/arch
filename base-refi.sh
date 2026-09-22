@@ -242,18 +242,18 @@ use_nvram false
 showtools install, shell, bootorder, gdisk, memtest, mok_tool, about, hidden_tags, reboot, exit, firmware, fwupdate
 extra_kernel_version_strings "linux-hardened,linux-rt-lts,linux-zen,linux-lts,linux-rt,linux"
 menuentry "Arch Linux" {
-    icon     /EFI/refind/icons/os_arch.png
-    volume   "Arch Linux"
-    loader   /root/boot/vmlinuz-linux
-    initrd   /root/boot/initramfs-linux.img
-    options  "root=PARTUUID=$PARTBOOT rw rootflags=subvol=@ add_efi_memmap"
+    icon     /EFI/BOOT/icons/os_arch.png
+    volume   $PARTUUID
+    loader   @/boot/vmlinuz-linux
+    initrd   @/boot/initramfs-linux.img
+    graphics on
+    options  "root=PARTUUID=$PARTBOOT rw rootflags=subvol=@ rd.luks.options=discard zswap.enabled=0"
     submenuentry "Boot using fallback initramfs" {
-        initrd /boot/initramfs-linux-fallback.img
+        initrd @/boot/initramfs-linux-fallback.img
     }
     submenuentry "Boot to terminal" {
         add_options "systemd.unit=multi-user.target"
     }
-    disabled
 }
 EOF
 
@@ -263,12 +263,17 @@ cat > "$rootmnt"/boot/refind_linux.conf <<EOF
 "Boot with minimal options"   "root=UUID=$UUID rootflags=subvol=@ ro"
 EOF
 
-# disable zswap
-#if $ENCRYPT ; then
-#   echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
-#else
-#   echo "options root=UUID="$UUID" rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
-#fi   
+cat > "$rootmnt"/etc/pacman.d/hooks/refind.hook <<EOF
+[Trigger]
+Operation=Upgrade
+Type=Package
+Target=refind
+
+[Action]
+Description = Updating rEFInd on ESP
+When=PostTransaction
+Exec=/usr/bin/refind-install
+EOF
 
 #  Setup zram
 echo "zram" > "$rootmnt"/etc/modules-load.d/zram.conf
