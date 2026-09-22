@@ -127,6 +127,7 @@ read -p 'Hostname? ' HOST
 # Wipe and partition disks
 wipefs -af $disk
 sgdisk --zap-all --clear $disk
+parted $disk --script mklabel gpt
 partprobe $disk
 sgdisk -n 0:0:+1000MiB -t 0:ef00 -c 0:esp $disk
 sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
@@ -245,7 +246,7 @@ menuentry "Arch Linux" {
     volume   "Arch Linux"
     loader   /root/boot/vmlinuz-linux
     initrd   /root/boot/initramfs-linux.img
-    options  "root=PARTUUID=$PARTBOOT rw rootflags=subvol=root add_efi_memmap"
+    options  "root=PARTUUID=$PARTBOOT rw rootflags=subvol=@ add_efi_memmap"
     submenuentry "Boot using fallback initramfs" {
         initrd /boot/initramfs-linux-fallback.img
     }
@@ -257,9 +258,9 @@ menuentry "Arch Linux" {
 EOF
 
 cat > "$rootmnt"/boot/refind_linux.conf <<EOF
-"Boot with standard options"  "root=UUID=$UUID rw zswap.enabled=0"
-"Boot to single-user mode"    "root=UUID=$UUID rw zswap.enabled=0 single"
-"Boot with minimal options"   "root=UUID=$UUID rw zswap.enabled=0"
+"Boot with standard options"  "root=UUID=$UUID rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0"
+"Boot to single-user mode"    "root=UUID=$UUID rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0 single"
+"Boot with minimal options"   "root=UUID=$UUID rootflags=subvol=@ ro"
 EOF
 
 # disable zswap
