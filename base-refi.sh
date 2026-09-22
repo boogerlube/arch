@@ -130,7 +130,7 @@ sgdisk --zap-all --clear $disk
 parted $disk --script mklabel gpt
 partprobe $disk
 sgdisk -n 0:0:+1000MiB -t 0:ef00 -c 0:esp $disk
-sgdisk -n 0:0:0 -t 0:8309 -c 0:arch $disk
+sgdisk -n 0:0:0 -t 0:8309 -c 0:archlinux $disk
 partprobe $disk
 mkfs.vfat -F32 -n ESP ${diskboot}
 MAPPING=${diskroot}

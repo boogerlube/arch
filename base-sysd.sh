@@ -11,7 +11,7 @@
 ######
 
 disk="/dev/nvme0n1"
-ENCRYPT=true
+ENCRYPT=false
 LTS=false
 rootmnt="/mnt"
 USERNAME="bob"
@@ -142,29 +142,11 @@ if $ENCRYPT ; then
    MAPPING="/dev/mapper/root"
 fi
 
-# Make and mount filesystems setup btrfs subvolumes
-mkfs.btrfs -f -L archlinux ${MAPPING}
+# Make and mount filesystems
+mkfs.ext4 -F -L archlinux ${MAPPING}
 mount ${MAPPING} /mnt
-btrfs su cr /mnt/@
-btrfs su cr /mnt/@home
-btrfs su cr /mnt/@snapshots
-btrfs su cr /mnt/@log
-btrfs su cr /mnt/@swap
-btrfs su cr /mnt/@cache
-btrfs su cr /mnt/@libvirt
-btrfs su cr /mnt/@tmp
-umount /mnt
-
-# mount subvolumes
-mount -o ${sv_opts},subvol=@ ${MAPPING} /mnt
 mount -m -o noatime,uid=0,gid=0,fmask=0077,dmask=0077 ${diskboot} /mnt/boot
-mount -m -o ${sv_opts},subvol=@home ${MAPPING} /mnt/home
-mount -m -o ${sv_opts},subvol=@log ${MAPPING} /mnt/var/log
-mount -m -o ${sv_opts},subvol=@snapshots ${MAPPING} /mnt/.snapshots
-mount -m -o ${sv_opts},subvol=@swap ${MAPPING} /mnt/swap
-mount -m -o ${sv_opts},subvol=@cache ${MAPPING} /mnt/var/cache
-mount -m -o ${sv_opts},subvol=@libvirt ${MAPPING} /mnt/var/lib/libvirt
-mount -m -o ${sv_opts},subvol=@tmp ${MAPPING} /mnt/var/tmp
+
 
 # Find the best mirrors for installation
 reflector --verbose -f 20 --protocol https --latest 15 --sort rate --country US --save /etc/pacman.d/mirrorlist
@@ -221,9 +203,11 @@ ucode=$(lscpu | grep "^Vendor ID:" | awk -F":" '{print $2}' | xargs)
 if [[ "$ucode" == *"Intel"* ]]; then
   echo "Intel processor detected. Installing intel-ucode...."
   ARCH="intel-ucode.img"
+  # arch-chroot "$rootmnt" pacman -S --noconfirm intel-ucode
 elif [[ "$ucode" == *"AMD"* ]]; then
   echo "AMD processor detected. Installing amd-ucode...."
   ARCH="amd-ucode.img"
+  # arch-chroot "$rootmnt" pacman -S --noconfirm amd-ucode
 else
   echo "No Intel or AMD processor detected."
   ARCH=""
@@ -246,17 +230,13 @@ else
    echo "initrd /initramfs-linux.img" >> "$rootmnt"/boot/loader/entries/arch.conf
 fi
 
-# enable zswap
-#echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw" >> "$rootmnt"/boot/loader/entries/arch.conf
-
 # disable zswap
 if $ENCRYPT ; then
-   echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
+   #echo "options cryptdevice=UUID="$UUID":root:allow-discards root=${MAPPING} rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
+   echo "options rd.luks.name="$UUID"=root root=${MAPPING} rd.luks.options=password-echo=no discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
 else
-   echo "options root=UUID="$UUID" rootflags=subvol=@ rd.luks.options=discard rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
+   echo "options root=UUID="$UUID" rw zswap.enabled=0" >> "$rootmnt"/boot/loader/entries/arch.conf
 fi   
-
-
 echo "default  arch.conf" > "$rootmnt"/boot/loader/loader.conf
 echo "timeout  0" >> "$rootmnt"/boot/loader/loader.conf
 echo "console-mode max" >> "$rootmnt"/boot/loader/loader.conf

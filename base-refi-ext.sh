@@ -128,9 +128,10 @@ read -p 'Hostname? ' HOST
 # Wipe and partition disks
 wipefs -af $disk
 sgdisk --zap-all --clear $disk
+parted $disk --script mklabel gpt
 partprobe $disk
 sgdisk -n 0:0:+1900MiB -t 0:ef00 -c 0:esp $disk
-sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
+sgdisk -n 0:0:0 -t 0:8309 -c 0:archroot $disk
 partprobe $disk
 mkfs.vfat -F32 -n ESP ${diskboot}
 MAPPING=${diskroot}
@@ -221,24 +222,42 @@ export UUIDBoot=$(blkid -s UUID -o value ${diskboot})
 refind-install --usedefault ${diskboot} --alldrivers
 
 cat > "$rootmnt"/efi/EFI/BOOT/refind.conf <<EOF
-timeout 20
+timeout 5
 use_nvram false
 showtools install, shell, bootorder, gdisk, memtest, mok_tool, about, hidden_tags, reboot, exit, firmware, fwupdate
 extra_kernel_version_strings "linux-hardened,linux-rt-lts,linux-zen,linux-lts,linux-rt,linux"
 menuentry "Arch Linux" {
-    icon     /EFI/refind/icons/os_arch.png
-    volume   "Arch Linux"
+    icon     /EFI/BOOT/icons/os_arch.png
+    volume   $PARTUUID
     loader   /boot/vmlinuz-linux
     initrd   /boot/initramfs-linux.img
-    options  "root=PARTUUID=$PARTBOOT rw add_efi_memmap"
+    graphics on
+    options  "root=UUID=$UUID rw rd.luks.options=discard zswap.enabled=0"
     submenuentry "Boot using fallback initramfs" {
         initrd /boot/initramfs-linux-fallback.img
     }
     submenuentry "Boot to terminal" {
         add_options "systemd.unit=multi-user.target"
     }
-    disabled
 }
+EOF
+
+cat > "$rootmnt"/boot/refind_linux.conf <<EOF
+"Boot with standard options"  "root=UUID=$UUID rd.luks.options=discard rw zswap.enabled=0"
+"Boot to single-user mode"    "root=UUID=$UUID rd.luks.options=discard rw zswap.enabled=0 single"
+"Boot with minimal options"   "root=UUID=$UUID ro"
+EOF
+
+cat > "$rootmnt"/etc/pacman.d/hooks/refind.hook <<EOF
+[Trigger]
+Operation=Upgrade
+Type=Package
+Target=refind
+
+[Action]
+Description = Updating rEFInd on ESP
+When=PostTransaction
+Exec=/usr/bin/refind-install
 EOF
 
 #  Setup zram
@@ -263,4 +282,4 @@ cp * "$rootmnt"/home/"$USERNAME"/arch/
 chown -R 1000:1000 "$rootmnt"/home/"$USERNAME"/arch
 
 #umount -R /mnt
-echo -e "\n\nPlease setup refind now\n"
+echo -e "\n\nPlease reboot now\n"
